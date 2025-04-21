@@ -14,6 +14,7 @@
 # ./main.sh --build    build project files [default option]
 # ./main.sh --clean    delete all files from build directory
 # ./main.sh --run      run compiler
+# ./main.sh --format   format source files
 
 # ==============================================================================
 # variables
@@ -50,6 +51,7 @@ if test "$1" = "--help"; then
     echo "--build    build project files [default option]"
     echo "--clean    delete all files from build directory"
     echo "--run      run compiler"
+    echo "--format   format source files"
     echo
 
     exit 0
@@ -83,20 +85,24 @@ if test "$1" = "--run"; then
 fi
 
 # --------------------------------------
+# format source files
+# --------------------------------------
+if test "$1" = "--format"; then
+    echo "formatting source files: start"
+
+    $code_formatter -r $src_dir/*.java
+
+    echo "formatting source files: done"
+    exit 0
+fi
+
+# --------------------------------------
 # build project
 # --------------------------------------
 echo "build project: start"
 
-echo "deleting the previous build if exist ..."
-cd $build_dir || exit 1
-rm -v *.*
-cd $work_dir
-
-echo "formatting the source file ..."
-$code_formatter -r $src_dir/$main_file
-
 echo "compiling the code ..."
-$code_compiler -d $build_dir $src_dir/$main_file
+$code_compiler -d $build_dir -cp $src_dir $src_dir/$main_file
 
 echo "build project: done"
 exit 0
