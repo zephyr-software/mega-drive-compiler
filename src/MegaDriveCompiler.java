@@ -1,10 +1,30 @@
-import java.io.RandomAccessFile;
+import java.util.List;
 
 public class MegaDriveCompiler {
 
   public static void main(String[] args) {
+    println("================================================================================");
     println("mega drive compiler: start");
+    println("================================================================================");
 
+    validateArgs(args);
+
+    println("----------------------------------------");
+    println("lexer");
+    println("----------------------------------------");
+
+    Lexer lexer = new Lexer(args[0]);
+    List<Token> tokenList = lexer.tokenize();
+    for (Token token : tokenList) {
+      println(token);
+    }
+
+    println("================================================================================");
+    println("mega drive compiler: done");
+    println("================================================================================");
+  }
+
+  public static void validateArgs(String[] args) {
     for (String arg : args) {
       println("arg: " + arg);
     }
@@ -14,20 +34,6 @@ public class MegaDriveCompiler {
 
       System.exit(0);
     }
-
-    try {
-      RandomAccessFile file = new RandomAccessFile(args[0], "r");
-
-      String str;
-      while ((str = file.readLine()) != null) {
-        System.out.println(str);
-      }
-      file.close();
-    } catch (Exception exception) {
-      println(exception.getMessage());
-    }
-
-    println("mega drive compiler: done");
   }
 
   public static void println(Object object) {
