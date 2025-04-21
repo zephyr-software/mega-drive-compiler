@@ -3,14 +3,14 @@ import java.io.RandomAccessFile;
 public class MegaDriveCompiler {
 
   public static void main(String[] args) {
-    System.out.println("mega drive compiler is running ...");
+    println("mega drive compiler: start");
 
     for (String arg : args) {
-      System.out.println("arg: " + arg);
+      println("arg: " + arg);
     }
 
     if (args.length == 0) {
-      System.out.println("file name is required ...");
+      println("file name is required ...");
 
       System.exit(0);
     }
@@ -24,9 +24,13 @@ public class MegaDriveCompiler {
       }
       file.close();
     } catch (Exception exception) {
-      System.out.println(exception.getMessage());
+      println(exception.getMessage());
     }
 
-    System.out.println("mega drive compiler has completed its work");
+    println("mega drive compiler: done");
+  }
+
+  public static void println(Object object) {
+    System.out.println(object);
   }
 }
