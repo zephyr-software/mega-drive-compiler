@@ -14,7 +14,7 @@ public class Lexer {
 
   private List<Token> tokenList;
 
-  private int line;
+  private int line = 1; // first line in source file
 
   public Lexer(String fileName) {
     this.fileName = fileName;
@@ -29,23 +29,42 @@ public class Lexer {
       char character = advance();
       Token token;
       switch (character) {
+        case ' ':
+          break;
+
+        case '\t': // tab
+          break;
+
+        case '\n': // new line
+          line++;
+          break;
+
+        case '\r': // carriage return
+          break;
+
+        case ';': // semicolon
+          while (peek() != '\n') {
+            advance();
+          }
+          break;
+
         case '-':
-          token = new Token(TokenType.MINUS, character);
+          token = new Token(TokenType.MINUS, character, line);
           tokenList.add(token);
           break;
 
         case '+':
-          token = new Token(TokenType.PLUS, character);
+          token = new Token(TokenType.PLUS, character, line);
           tokenList.add(token);
           break;
 
         case '*':
-          token = new Token(TokenType.STAR, character);
+          token = new Token(TokenType.STAR, character, line);
           tokenList.add(token);
           break;
 
         case '/':
-          token = new Token(TokenType.SLASH, character);
+          token = new Token(TokenType.SLASH, character, line);
           tokenList.add(token);
           break;
 
@@ -65,6 +84,41 @@ public class Lexer {
     cursorPosition++;
 
     return character;
+  }
+
+  // just takes a peek at the current character
+  // does not consume the character
+  private char peek() {
+    char character = fileChars[cursorPosition];
+
+    return character;
+  }
+
+  // looks at the next character in the source
+  // does not consume the character
+  private char lookAhead() {
+    char character = fileChars[cursorPosition + 1];
+
+    return character;
+  }
+
+  // check if current character matches an expectation
+  // consumes the character only if match is true
+  private boolean match(char expectedCharacter) {
+    if (cursorPosition >= fileChars.length) {
+
+      return false;
+    }
+
+    char character = fileChars[cursorPosition];
+    if (character != expectedCharacter) {
+
+      return false;
+    }
+
+    cursorPosition++; // if it is a match, we also consume that char
+
+    return true;
   }
 
   private char[] readFile() {

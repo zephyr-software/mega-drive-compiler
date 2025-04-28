@@ -1,6 +1,7 @@
 public enum TokenType {
 
   // single character token
+  SEMICOLON, // ;
 
   PLUS, // +
   MINUS, // -
