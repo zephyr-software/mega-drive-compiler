@@ -29,6 +29,7 @@ public class Lexer {
       char character = advance();
       Token token;
       switch (character) {
+        // ignored characters
         case ' ':
           break;
 
@@ -48,24 +49,40 @@ public class Lexer {
           }
           break;
 
+        // 1 character
         case '-':
-          token = new Token(TokenType.MINUS, character, line);
+          token = new Token(TokenType.MINUS, character + "", line);
           tokenList.add(token);
           break;
 
         case '+':
-          token = new Token(TokenType.PLUS, character, line);
+          token = new Token(TokenType.PLUS, character + "", line);
           tokenList.add(token);
           break;
 
         case '*':
-          token = new Token(TokenType.STAR, character, line);
+          token = new Token(TokenType.STAR, character + "", line);
           tokenList.add(token);
           break;
 
         case '/':
-          token = new Token(TokenType.SLASH, character, line);
+          token = new Token(TokenType.SLASH, character + "", line);
           tokenList.add(token);
+          break;
+
+        // 2 characters
+        case '=':
+          if (match('=')) {
+            token = new Token(TokenType.EQUALS, character + "=", line);
+            tokenList.add(token);
+          }
+          break;
+
+        case '!':
+          if (match('=')) {
+            token = new Token(TokenType.NOT_EQUALS, character + "=", line);
+            tokenList.add(token);
+          }
           break;
 
         default:

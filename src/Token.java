@@ -1,10 +1,10 @@
 public class Token {
 
   private TokenType tokenType;
-  private char lexeme;
+  private String lexeme;
   private int line;
 
-  public Token(TokenType tokenType, char lexeme, int line) {
+  public Token(TokenType tokenType, String lexeme, int line) {
     this.tokenType = tokenType;
     this.lexeme = lexeme;
     this.line = line;
