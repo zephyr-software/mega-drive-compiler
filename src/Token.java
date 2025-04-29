@@ -13,12 +13,6 @@ public class Token {
   @Override
   public String toString() {
 
-    return "token [token type: "
-        + tokenType.name().toLowerCase()
-        + "; lexeme: "
-        + lexeme
-        + "; line: "
-        + line
-        + "]";
+    return "token [token type: " + tokenType + "; lexeme: " + lexeme + "; line: " + line + "]";
   }
 }

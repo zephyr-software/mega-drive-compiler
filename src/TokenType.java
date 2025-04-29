@@ -13,5 +13,6 @@ public enum TokenType {
   NOT_EQUALS, // !=
 
   // numbers
-  NUMBER // 32 bit number
+  NUMBER, // 32 bit number
+  STRING // ASCII string
 }

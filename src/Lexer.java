@@ -95,6 +95,17 @@ public class Lexer {
           tokenList.add(token);
           break;
 
+        // strings
+        case '"':
+          String string = "";
+          while (peek() != '"') {
+            string += advance();
+          }
+          advance(); // consume the ending quote
+          token = new Token(TokenType.STRING, string, line);
+          tokenList.add(token);
+          break;
+
         default:
           System.out.println("lexer warning - unknown character");
           break;
