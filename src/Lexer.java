@@ -85,6 +85,16 @@ public class Lexer {
           }
           break;
 
+        // numbers
+        case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+          String number = character + "";
+          while (isDigit(peek())) {
+            number += advance();
+          }
+          token = new Token(TokenType.NUMBER, number, line);
+          tokenList.add(token);
+          break;
+
         default:
           System.out.println("lexer warning - unknown character");
           break;
@@ -92,6 +102,11 @@ public class Lexer {
     }
 
     return tokenList;
+  }
+
+  private boolean isDigit(char character) {
+
+    return character >= '0' && character <= '9';
   }
 
   // advance the cursor pointer

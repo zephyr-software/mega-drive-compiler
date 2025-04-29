@@ -12,6 +12,6 @@ public enum TokenType {
   EQUALS, // ==
   NOT_EQUALS, // !=
 
-  // literals
-  IDENTIFIER
+  // numbers
+  NUMBER // 32 bit number
 }
