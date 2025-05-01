@@ -12,7 +12,7 @@ public enum TokenType {
   EQUALS, // ==
   NOT_EQUALS, // !=
 
-  // numbers
   NUMBER, // 32 bit number
-  STRING // ASCII string
+  STRING, // ASCII string
+  IDENTIFIER // 0-9, a-z, A-Z, _ [must start with a letter or underscore]
 }

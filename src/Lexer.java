@@ -95,6 +95,20 @@ public class Lexer {
           tokenList.add(token);
           break;
 
+        // identifiers
+        case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm':
+        case 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z':
+        case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M':
+        case 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z':
+        case '_':
+          String identifier = character + "";
+          while (isLetterOrDigit(peek()) || peek() == '_') {
+            identifier += advance();
+          }
+          token = new Token(TokenType.IDENTIFIER, identifier, line);
+          tokenList.add(token);
+          break;
+
         // strings
         case '"':
           String string = "";
@@ -113,6 +127,12 @@ public class Lexer {
     }
 
     return tokenList;
+  }
+
+  private boolean isLetterOrDigit(char character) {
+    return (character >= 'a' && character <= 'z')
+        || (character >= 'A' && character <= 'Z')
+        || (character >= '0' && character <= '9');
   }
 
   private boolean isDigit(char character) {
