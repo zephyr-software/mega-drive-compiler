@@ -14,5 +14,8 @@ public enum TokenType {
 
   NUMBER, // 32 bit number
   STRING, // ASCII string
-  IDENTIFIER // 0-9, a-z, A-Z, _ [must start with a letter or underscore]
+  IDENTIFIER, // 0-9, a-z, A-Z, _ [must start with a letter or underscore]
+
+  // keyword
+  FUNCTION // function
 }

@@ -105,7 +105,14 @@ public class Lexer {
           while (isLetterOrDigit(peek()) || peek() == '_') {
             identifier += advance();
           }
-          token = new Token(TokenType.IDENTIFIER, identifier, line);
+
+          // keywords
+          if (isKeyword(identifier)) {
+            token = new Token(TokenType.FUNCTION, identifier, line);
+          } else {
+            token = new Token(TokenType.IDENTIFIER, identifier, line);
+          }
+
           tokenList.add(token);
           break;
 
@@ -121,12 +128,21 @@ public class Lexer {
           break;
 
         default:
-          System.out.println("lexer warning - unknown character");
+          System.out.println("lexer warning - unknown character: " + character);
           break;
       }
     }
 
     return tokenList;
+  }
+
+  private boolean isKeyword(String identifier) {
+    if (TokenType.FUNCTION.name().toLowerCase().equals(identifier)) {
+
+      return true;
+    }
+
+    return false;
   }
 
   private boolean isLetterOrDigit(char character) {

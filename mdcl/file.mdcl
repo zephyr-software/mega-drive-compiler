@@ -7,3 +7,4 @@
 "TITLE STRING 56789"
 Player_1 Pleayer_2
 "Car"_Speed
+function getPlayerXY();
