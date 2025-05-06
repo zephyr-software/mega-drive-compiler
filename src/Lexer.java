@@ -75,7 +75,11 @@ public class Lexer {
           if (match('=')) {
             token = new Token(TokenType.EQUALS, character + "=", line);
             tokenList.add(token);
+            break;
           }
+
+          token = new Token(TokenType.ASSIGNMENT, character + "", line);
+          tokenList.add(token);
           break;
 
         case '!':

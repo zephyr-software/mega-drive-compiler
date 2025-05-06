@@ -1,7 +1,29 @@
-; this is a comment
+; ==============================================================================
+; MEGA DRIVE COMPILER LANGUAGE
+;
+; ==============================================================================
 
+; --------------------------------------
+; variable section
+; --------------------------------------
+title_x = 0                        ; title x screen coordinate
+title_y = 0                        ; title y screen coordinate
+title_text = "mega drive compiler" ; title text message
+
+a = 1
+b = 2
+c = null
+
+; --------------------------------------
+; code section
+; --------------------------------------
+c = a + b
+
+; --------------------------------------
+; experiment section
+; --------------------------------------
 -+/*==!=
-1234
+1234 ; comment
 5678
 "string 01234"
 "TITLE STRING 56789"
