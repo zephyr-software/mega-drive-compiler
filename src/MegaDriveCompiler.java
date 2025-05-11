@@ -1,17 +1,15 @@
+import static tool.TextTool.*;
+
 import java.util.List;
 
 public class MegaDriveCompiler {
 
   public static void main(String[] args) {
-    println("================================================================================");
-    println("mega drive compiler: start");
-    println("================================================================================");
+    printBanner("mega drive compiler: start");
 
     validateArgs(args);
 
-    println("----------------------------------------");
-    println("lexer");
-    println("----------------------------------------");
+    printShortBanner("lexer");
 
     Lexer lexer = new Lexer(args[0]);
     List<Token> tokenList = lexer.tokenize();
@@ -19,9 +17,7 @@ public class MegaDriveCompiler {
       println(token);
     }
 
-    println("================================================================================");
-    println("mega drive compiler: done");
-    println("================================================================================");
+    printBanner("mega drive compiler: end");
   }
 
   public static void validateArgs(String[] args) {
@@ -34,9 +30,5 @@ public class MegaDriveCompiler {
 
       System.exit(0);
     }
-  }
-
-  public static void println(Object object) {
-    System.out.println(object);
   }
 }
