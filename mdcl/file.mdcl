@@ -3,16 +3,34 @@
 ;
 ; ==============================================================================
 
+
 ; --------------------------------------
 ; variable section
 ; --------------------------------------
-title_x = 0                        ; title x screen coordinate
-title_y = 0                        ; title y screen coordinate
-title_text = "mega drive compiler" ; title text message
 
-a = 1
-b = 2
-c = null
+bit8  min_bit8  = 0                ; min unsigned bit8  value [size: 1 byte]
+bit16 min_bit16 = 0                ; min unsigned bit16 value [size: 2 byte]
+bit32 min_bit32 = 0                ; min unsigned bit32 value [size: 4 byte]
+
+bit8  max_bit8  = 255              ; max unsigned bit8  value [size: 1 byte]
+bit16 max_bit16 = 65535            ; max unsigned bit16 value [size: 2 byte]
+bit32 max_bit32 = 4294967295       ; max unsigned bit32 value [size: 4 byte]
+
+sign bit8  min_bit8  = -128        ; min signed bit8  value [size: 1 byte]
+sign bit16 min_bit16 = -32768      ; min signed bit16 value [size: 2 byte]
+sign bit32 min_bit32 = -2147483648 ; min signed bit32 value [size: 4 byte]
+
+sign bit8  max_bit8  = 127         ; max signed bit8  value [size: 1 byte]
+sign bit16 max_bit16 = 32767       ; max signed bit16 value [size: 2 byte]
+sign bit32 max_bit32 = 2147483647  ; max signed bit32 value [size: 4 byte]
+
+string min_string = ""             ; min string value   0 char [size:   1 byte]
+string max_string = "255 char max" ; max string value 255 char [size: 256 byte]
+
+
+bit8 a = 1
+bit8 b = 2
+bit8 c = 0
 
 ; --------------------------------------
 ; code section
@@ -22,7 +40,7 @@ c = a + b
 ; --------------------------------------
 ; experiment section
 ; --------------------------------------
--+/*==!=
+-+/*== !=
 1234 ; comment
 5678
 "string 01234"

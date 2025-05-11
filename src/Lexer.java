@@ -111,13 +111,19 @@ public class Lexer {
           }
 
           // keywords
-          if (isKeyword(identifier)) {
-            token = new Token(TokenType.FUNCTION, identifier, line);
+          if (TokenType.BIT8.name().toLowerCase().equals(identifier)) {
+            token = new Token(TokenType.BIT8, identifier, line);
+          } else if (TokenType.BIT16.name().toLowerCase().equals(identifier)) {
+            token = new Token(TokenType.BIT16, identifier, line);
+          } else if (TokenType.BIT32.name().toLowerCase().equals(identifier)) {
+            token = new Token(TokenType.BIT32, identifier, line);
+          } else if (TokenType.SIGN.name().toLowerCase().equals(identifier)) {
+            token = new Token(TokenType.SIGN, identifier, line);
           } else {
             token = new Token(TokenType.IDENTIFIER, identifier, line);
           }
-
           tokenList.add(token);
+
           break;
 
         // strings
@@ -138,15 +144,6 @@ public class Lexer {
     }
 
     return tokenList;
-  }
-
-  private boolean isKeyword(String identifier) {
-    if (TokenType.FUNCTION.name().toLowerCase().equals(identifier)) {
-
-      return true;
-    }
-
-    return false;
   }
 
   private boolean isLetterOrDigit(char character) {
