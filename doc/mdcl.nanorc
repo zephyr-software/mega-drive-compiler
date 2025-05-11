@@ -1,0 +1,31 @@
+# ==============================================================================
+# Syntax highlighting for Mega Drive Compiler Language
+#
+# ==============================================================================
+
+
+# --------------------------------------
+# file name
+#
+# --------------------------------------
+
+syntax mdcl "\.(mdcl)$"
+
+
+# ------------------------------------------------------------------------------
+# syntax rules
+# regular expressions
+# ------------------------------------------------------------------------------
+
+# 1 character tokens
+color lime "(-|\+|\/|\*|!|=)"
+
+# keywords
+color yellow "\<(sign|bit8|bit16|bit32|string)\>"
+color magenta "function"
+
+# string
+icolor plum "".*""
+
+# comments
+color brightblack ";.*"
