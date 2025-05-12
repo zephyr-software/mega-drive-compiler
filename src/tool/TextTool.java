@@ -9,19 +9,23 @@ public class TextTool {
 
   }
 
-  public static void println(Object object) {
+  public static void print(Object object) {
+    System.out.print(object);
+  }
+
+  public static void printLine(Object object) {
     System.out.println(object);
   }
 
   public static void printBanner(String message) {
-    println(BANNER_LINE);
-    println(message);
-    println(BANNER_LINE);
+    printLine(BANNER_LINE);
+    printLine(message);
+    printLine(BANNER_LINE);
   }
 
   public static void printShortBanner(String message) {
-    println(SHORT_BANNER_LINE);
-    println(message);
-    println(SHORT_BANNER_LINE);
+    printLine(SHORT_BANNER_LINE);
+    printLine(message);
+    printLine(SHORT_BANNER_LINE);
   }
 }
