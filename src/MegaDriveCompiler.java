@@ -4,6 +4,7 @@ import static tool.TextTool.printBanner;
 import static tool.TextTool.printLine;
 import static tool.TextTool.printShortBanner;
 
+import exception.FileException;
 import exception.ValidationException;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class MegaDriveCompiler {
       }
 
       printBanner("mega drive compiler: end");
-    } catch (ValidationException exception) {
+    } catch (FileException | ValidationException exception) {
       printLine(exception.getMessage());
     }
   }

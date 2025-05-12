@@ -1,12 +1,12 @@
-import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
+import static tool.FileTool.readFile;
+
+import exception.FileException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Lexer {
 
   private String fileName;
-  private RandomAccessFile file;
 
   private char[] fileChars = null;
   private int cursorStart = 0;
@@ -21,8 +21,8 @@ public class Lexer {
     tokenList = new ArrayList<Token>();
   }
 
-  public List<Token> tokenize() {
-    char[] fileChars = readFile();
+  public List<Token> tokenize() throws FileException {
+    fileChars = readFile(fileName);
 
     while (cursorPosition < fileChars.length) {
       cursorStart = cursorPosition;
@@ -199,25 +199,5 @@ public class Lexer {
     cursorPosition++; // if it is a match, we also consume that char
 
     return true;
-  }
-
-  private char[] readFile() {
-    try {
-      file = new RandomAccessFile(fileName, "r");
-
-      byte[] fileBytes = new byte[(int) file.length()];
-      file.readFully(fileBytes);
-      fileChars = new String(fileBytes, StandardCharsets.UTF_8).toCharArray();
-
-      file.close();
-
-      return fileChars;
-    } catch (Exception exception) {
-      System.out.println(exception.getMessage());
-
-      System.exit(0);
-    }
-
-    return fileChars;
   }
 }
