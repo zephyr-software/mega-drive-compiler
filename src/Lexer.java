@@ -27,129 +27,160 @@ public class Lexer {
     while (cursorPosition < fileChars.length) {
       cursorStart = cursorPosition;
       char character = advance();
-      Token token;
-      switch (character) {
-        // ignored characters
-        case ' ':
-          break;
 
-        case '\t': // tab
-          break;
+      // ignored characters
 
-        case '\n': // new line
-          line++;
-          break;
+      if (character == ' ') { // whitespace
 
-        case '\r': // carriage return
-          break;
-
-        case ';': // semicolon
-          while (peek() != '\n') {
-            advance();
-          }
-          break;
-
-        // 1 character
-        case '-':
-          token = new Token(TokenType.MINUS, character + "", line);
-          tokenList.add(token);
-          break;
-
-        case '+':
-          token = new Token(TokenType.PLUS, character + "", line);
-          tokenList.add(token);
-          break;
-
-        case '*':
-          token = new Token(TokenType.STAR, character + "", line);
-          tokenList.add(token);
-          break;
-
-        case '/':
-          token = new Token(TokenType.SLASH, character + "", line);
-          tokenList.add(token);
-          break;
-
-        // 2 characters
-        case '=':
-          if (match('=')) {
-            token = new Token(TokenType.EQUALS, character + "=", line);
-            tokenList.add(token);
-            break;
-          }
-
-          token = new Token(TokenType.ASSIGNMENT, character + "", line);
-          tokenList.add(token);
-          break;
-
-        case '!':
-          if (match('=')) {
-            token = new Token(TokenType.NOT_EQUALS, character + "=", line);
-            tokenList.add(token);
-          }
-          break;
-
-        // numbers
-        case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-          String number = character + "";
-          while (isDigit(peek())) {
-            number += advance();
-          }
-          token = new Token(TokenType.NUMBER, number, line);
-          tokenList.add(token);
-          break;
-
-        // identifiers
-        case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm':
-        case 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z':
-        case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M':
-        case 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z':
-        case '_':
-          String identifier = character + "";
-          while (isLetterOrDigit(peek()) || peek() == '_') {
-            identifier += advance();
-          }
-
-          // keywords
-          if (TokenType.BIT8.name().toLowerCase().equals(identifier)) {
-            token = new Token(TokenType.BIT8, identifier, line);
-          } else if (TokenType.BIT16.name().toLowerCase().equals(identifier)) {
-            token = new Token(TokenType.BIT16, identifier, line);
-          } else if (TokenType.BIT32.name().toLowerCase().equals(identifier)) {
-            token = new Token(TokenType.BIT32, identifier, line);
-          } else if (TokenType.SIGN.name().toLowerCase().equals(identifier)) {
-            token = new Token(TokenType.SIGN, identifier, line);
-          } else {
-            token = new Token(TokenType.IDENTIFIER, identifier, line);
-          }
-          tokenList.add(token);
-
-          break;
-
-        // strings
-        case '"':
-          String string = "";
-          while (peek() != '"') {
-            string += advance();
-          }
-          advance(); // consume the ending quote
-          token = new Token(TokenType.STRING, string, line);
-          tokenList.add(token);
-          break;
-
-        default:
-          System.out.println("lexer warning - unknown character: " + character);
-          break;
+        continue; // ignore character
       }
+
+      if (character == '\t') { // tab
+
+        continue; // ignore character
+      }
+
+      if (character == '\n') { // new line
+        line++;
+
+        continue;
+      }
+
+      if (character == '\r') { // carriage return
+
+        continue; // ignore character
+      }
+
+      if (character == ';') { // semicolon
+        while (peek() != '\n') { // skip comment line characters
+          advance();
+        }
+
+        continue;
+      }
+
+      // 1 character
+
+      if (character == '-') { // minus
+        Token token = new Token(TokenType.MINUS, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == '+') { // plus
+        Token token = new Token(TokenType.PLUS, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == '*') { // star
+        Token token = new Token(TokenType.STAR, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == '/') { // slash
+        Token token = new Token(TokenType.SLASH, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      // 2 characters
+
+      if (character == '=') { // equals / assignment
+        if (character == '=') { // equals / equals
+          Token token = new Token(TokenType.EQUALS, character + "=", line);
+          tokenList.add(token);
+
+          continue;
+        }
+
+        Token token = new Token(TokenType.ASSIGNMENT, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == '!') { // exclamation mark / not
+        if (match('=')) { // equals / not equals
+          Token token = new Token(TokenType.NOT_EQUALS, character + "=", line);
+          tokenList.add(token);
+
+          continue;
+        }
+
+        System.out.println("lexer warning - not supported yet character: " + character);
+      }
+
+      // numbers
+
+      if (isDigit(character)) {
+        String number = character + "";
+        while (isDigit(peek())) {
+          number += advance();
+        }
+
+        Token token = new Token(TokenType.NUMBER, number, line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      // identifiers
+
+      if (isLetter(character) || character == '_') {
+        String identifier = character + "";
+        while (isLetter(peek()) || isDigit(peek()) || peek() == '_') {
+          identifier += advance();
+        }
+
+        // keywords
+
+        Token token;
+        if (TokenType.BIT8.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.BIT8, identifier, line);
+        } else if (TokenType.BIT16.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.BIT16, identifier, line);
+        } else if (TokenType.BIT32.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.BIT32, identifier, line);
+        } else if (TokenType.SIGN.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.SIGN, identifier, line);
+        } else {
+          token = new Token(TokenType.IDENTIFIER, identifier, line);
+        }
+        tokenList.add(token);
+
+        continue;
+      }
+
+      // strings
+
+      if (character == '"') { // double quotes
+        String string = "";
+        while (peek() != '"') {
+          string += advance();
+        }
+        advance(); // consume the ending quote
+
+        Token token = new Token(TokenType.STRING, string, line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      System.out.println("lexer warning - unknown character: " + character);
     }
 
     return tokenList;
   }
 
-  private boolean isLetterOrDigit(char character) {
-    return (character >= 'a' && character <= 'z')
-        || (character >= 'A' && character <= 'Z')
-        || (character >= '0' && character <= '9');
+  private boolean isLetter(char character) {
+
+    return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z');
   }
 
   private boolean isDigit(char character) {
