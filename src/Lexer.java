@@ -58,6 +58,20 @@ public class Lexer {
 
       // 1 character
 
+      if (character == '(') { // left round bracket
+        Token token = new Token(TokenType.LEFT_ROUND_BRACKET, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == ')') { // right round bracket
+        Token token = new Token(TokenType.RIGHT_ROUND_BRACKET, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
       if (character == '-') { // minus
         Token token = new Token(TokenType.MINUS, character + "", line);
         tokenList.add(token);

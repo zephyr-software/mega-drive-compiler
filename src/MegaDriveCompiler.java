@@ -27,7 +27,6 @@ public class MegaDriveCompiler {
       for (UnknownChar unknownChar : unknownCharList) {
         printLine(unknownChar);
       }
-      printLine("");
 
       for (Token token : tokenList) {
         printLine(token);

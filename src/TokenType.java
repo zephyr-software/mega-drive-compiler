@@ -3,6 +3,9 @@ public enum TokenType {
   // 1 character tokens
   SEMICOLON, // ;
 
+  LEFT_ROUND_BRACKET, // (
+  RIGHT_ROUND_BRACKET, // (
+
   ASSIGNMENT, // =
   PLUS, // +
   MINUS, // -
