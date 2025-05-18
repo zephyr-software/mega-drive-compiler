@@ -1,5 +1,6 @@
 import static tool.ArgTool.convert;
 import static tool.ArgTool.validate;
+import static tool.FileTool.readFile;
 import static tool.TextTool.printBanner;
 import static tool.TextTool.printLine;
 import static tool.TextTool.printShortBanner;
@@ -19,7 +20,8 @@ public class MegaDriveCompiler {
 
       printShortBanner("lexer");
 
-      Lexer lexer = new Lexer(args[0]);
+      char[] fileChars = readFile(args[0]);
+      Lexer lexer = new Lexer(fileChars);
       List<Token> tokenList = lexer.tokenize();
       List<UnknownChar> unknownCharList = lexer.getUnknownCharList();
       for (UnknownChar unknownChar : unknownCharList) {

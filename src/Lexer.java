@@ -1,12 +1,8 @@
-import static tool.FileTool.readFile;
-
 import exception.FileException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Lexer {
-
-  private String fileName;
 
   private char[] fileChars = null;
   private int cursorStart = 0;
@@ -17,15 +13,14 @@ public class Lexer {
 
   private int line = 1; // first line in source file
 
-  public Lexer(String fileName) {
-    this.fileName = fileName;
+  public Lexer(char[] fileChars) {
+    this.fileChars = fileChars;
+
     tokenList = new ArrayList<Token>();
     unknownCharList = new ArrayList<UnknownChar>();
   }
 
   public List<Token> tokenize() throws FileException {
-    fileChars = readFile(fileName);
-
     while (cursorPosition < fileChars.length) {
       cursorStart = cursorPosition;
       char character = advance();
