@@ -32,7 +32,10 @@ public class MegaDriveCompiler {
         printLine(token);
       }
 
-      Parser parser = new Parser();
+      printShortBanner("parser");
+
+      Parser parser = new Parser(tokenList);
+      parser.parse();
 
       printBanner("mega drive compiler: end");
     } catch (FileException | ValidationException exception) {
