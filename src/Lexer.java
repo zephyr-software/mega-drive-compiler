@@ -13,12 +13,14 @@ public class Lexer {
   private int cursorPosition = 0;
 
   private List<Token> tokenList;
+  private List<UnknownChar> unknownCharList;
 
   private int line = 1; // first line in source file
 
   public Lexer(String fileName) {
     this.fileName = fileName;
     tokenList = new ArrayList<Token>();
+    unknownCharList = new ArrayList<UnknownChar>();
   }
 
   public List<Token> tokenize() throws FileException {
@@ -172,10 +174,16 @@ public class Lexer {
         continue;
       }
 
-      System.out.println("lexer warning - unknown character: " + character);
+      UnknownChar unknownChar = new UnknownChar(character + "", line);
+      unknownCharList.add(unknownChar);
     }
 
     return tokenList;
+  }
+
+  public List<UnknownChar> getUnknownCharList() {
+
+    return unknownCharList;
   }
 
   private boolean isLetter(char character) {

@@ -21,9 +21,17 @@ public class MegaDriveCompiler {
 
       Lexer lexer = new Lexer(args[0]);
       List<Token> tokenList = lexer.tokenize();
+      List<UnknownChar> unknownCharList = lexer.getUnknownCharList();
+      for (UnknownChar unknownChar : unknownCharList) {
+        printLine(unknownChar);
+      }
+      printLine("");
+
       for (Token token : tokenList) {
         printLine(token);
       }
+
+      Parser parser = new Parser();
 
       printBanner("mega drive compiler: end");
     } catch (FileException | ValidationException exception) {
