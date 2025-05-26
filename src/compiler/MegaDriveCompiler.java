@@ -4,6 +4,7 @@ import static compiler.tool.ArgTool.convert;
 import static compiler.tool.ArgTool.validate;
 import static compiler.tool.FileTool.readFile;
 import static compiler.tool.TextTool.printBanner;
+import static compiler.tool.TextTool.printFormattedAST;
 import static compiler.tool.TextTool.printLine;
 import static compiler.tool.TextTool.printShortBanner;
 
@@ -41,6 +42,7 @@ public class MegaDriveCompiler {
       Parser parser = new Parser(tokenList);
       ExpressionModel expressionModel = parser.parse();
       printLine(expressionModel);
+      printFormattedAST(expressionModel.toString());
 
       printBanner("mega drive compiler: end");
     } catch (FileException | ParserException | ValidationException exception) {

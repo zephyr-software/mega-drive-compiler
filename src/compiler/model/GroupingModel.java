@@ -12,6 +12,6 @@ public class GroupingModel extends ExpressionModel {
   @Override
   public String toString() {
 
-    return "group [" + value.toString() + "]";
+    return "^group [" + value.toString() + "]$";
   }
 }

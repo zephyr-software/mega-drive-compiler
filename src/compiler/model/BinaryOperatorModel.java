@@ -20,8 +20,6 @@ public class BinaryOperatorModel extends ExpressionModel {
   @Override
   public String toString() {
 
-    return "binop [" + operator.getLexeme()
-    + "; " + left
-    + "; " + right + "]";
+    return "^binop [" + operator.getLexeme() + "; " + left + "; " + right + "]$";
   }
 }

@@ -90,7 +90,8 @@ fi
 if test "$1" = "--format"; then
     echo "formatting source files: start"
 
-    $code_formatter -r $src_dir/compiler/*
+    $code_formatter -r $src_dir/compiler/*.java
+    $code_formatter -r $src_dir/compiler/*/*.java
 
     echo "formatting source files: done"
     exit 0

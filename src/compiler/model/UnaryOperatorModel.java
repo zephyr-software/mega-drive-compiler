@@ -16,6 +16,6 @@ public class UnaryOperatorModel extends ExpressionModel {
   @Override
   public String toString() {
 
-    return "unop [" + operator.getLexeme() + "; " + operand + "]";
+    return "^unop [" + operator.getLexeme() + "; " + operand + "]$";
   }
 }

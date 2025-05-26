@@ -17,6 +17,6 @@ public class Bit16Model extends ExpressionModel {
   @Override
   public String toString() {
 
-    return "bit16 [" + value + "]";
+    return "^bit16 [" + value + "]$";
   }
 }
