@@ -65,7 +65,7 @@ if test "$1" = "--clean"; then
     echo "clean project: start"
 
     cd $build_dir || exit 1
-    rm -v *.*
+    rm -frv *
     cd $work_dir
 
     echo "clean project: done"
@@ -78,7 +78,7 @@ fi
 if test "$1" = "--run"; then
     echo "run project: start"
 
-    $code_vm -cp $build_dir $main_class $mdcl_dir/$mdcl_file
+    $code_vm -cp $build_dir compiler.$main_class $mdcl_dir/$mdcl_file
 
     echo "run project: done"
     exit 0
@@ -90,7 +90,7 @@ fi
 if test "$1" = "--format"; then
     echo "formatting source files: start"
 
-    $code_formatter -r $src_dir/*.java
+    $code_formatter -r $src_dir/compiler/*
 
     echo "formatting source files: done"
     exit 0
@@ -102,7 +102,7 @@ fi
 echo "build project: start"
 
 echo "compiling the code ..."
-$code_compiler -d $build_dir -cp $src_dir $src_dir/$main_file
+$code_compiler -d $build_dir -cp $src_dir $src_dir/compiler/$main_file
 
 echo "build project: done"
 exit 0
