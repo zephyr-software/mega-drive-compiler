@@ -5,7 +5,9 @@ public class GroupingModel extends ExpressionModel {
 
   private ExpressionModel value;
 
-  public GroupingModel(ExpressionModel value) {
+  public GroupingModel(ExpressionModel value, int lineNumber) {
+    super(lineNumber);
+
     this.value = value;
   }
 

@@ -30,8 +30,9 @@ public class Parser {
 
     while (match(TokenType.PLUS) || match(TokenType.MINUS)) {
       Token operator = previousToken();
+      int lineNumber = operator.getLine();
       ExpressionModel right = parseTerm();
-      expressionModel = new BinaryOperatorModel(operator, expressionModel, right);
+      expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
     }
 
     return expressionModel;
@@ -43,8 +44,9 @@ public class Parser {
 
     while (match(TokenType.STAR) || match(TokenType.SLASH)) {
       Token operator = previousToken();
+      int lineNumber = operator.getLine();
       ExpressionModel right = parseFactor();
-      expressionModel = new BinaryOperatorModel(operator, expressionModel, right);
+      expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
     }
 
     return expressionModel;
@@ -60,9 +62,10 @@ public class Parser {
   private ExpressionModel parseUnary() throws ParserException {
     if (match(TokenType.MINUS) | match(TokenType.PLUS)) {
       Token operator = previousToken();
+      int lineNumber = operator.getLine();
       ExpressionModel operand = parseUnary();
 
-      return new UnaryOperatorModel(operator, operand);
+      return new UnaryOperatorModel(operator, operand, lineNumber);
     }
 
     return parsePrimary();
@@ -74,8 +77,9 @@ public class Parser {
       Token token = previousToken();
       String lexeme = token.getLexeme();
       Integer value = Integer.parseInt(lexeme);
+      int lineNumber = token.getLine();
 
-      return new Bit16Model(value);
+      return new Bit16Model(value, lineNumber);
     }
 
     if (match(TokenType.LEFT_ROUND_BRACKET)) {
@@ -87,7 +91,10 @@ public class Parser {
         throw new ParserException("error: char ')' expected; line: " + token.getLine());
       }
 
-      return new GroupingModel(expressionModel);
+      Token token = previousToken();
+      int lineNumber = token.getLine();
+
+      return new GroupingModel(expressionModel, lineNumber);
     }
 
     throw new ParserException("not supported model");

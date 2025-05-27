@@ -10,7 +10,10 @@ public class BinaryOperatorModel extends ExpressionModel {
   private ExpressionModel left;
   private ExpressionModel right;
 
-  public BinaryOperatorModel(Token operator, ExpressionModel left, ExpressionModel right) {
+  public BinaryOperatorModel(
+      Token operator, ExpressionModel left, ExpressionModel right, int lineNumber) {
+    super(lineNumber);
+
     this.operator = operator;
 
     this.left = left;

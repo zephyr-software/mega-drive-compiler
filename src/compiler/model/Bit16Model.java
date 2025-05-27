@@ -5,7 +5,9 @@ public class Bit16Model extends ExpressionModel {
 
   private Integer value;
 
-  public Bit16Model(Integer value) {
+  public Bit16Model(Integer value, int lineNumber) {
+    super(lineNumber);
+
     this.value = value;
   }
 
