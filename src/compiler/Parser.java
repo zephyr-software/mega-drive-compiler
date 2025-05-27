@@ -83,7 +83,8 @@ public class Parser {
 
       if (!match(TokenType.RIGHT_ROUND_BRACKET)) {
 
-        throw new ParserException(") expected");
+        Token token = previousToken();
+        throw new ParserException("error: char ')' expected; line: " + token.getLine());
       }
 
       return new GroupingModel(expressionModel);

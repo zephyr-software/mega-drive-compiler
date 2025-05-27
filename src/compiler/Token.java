@@ -22,6 +22,11 @@ public class Token {
     return lexeme;
   }
 
+  public int getLine() {
+
+    return line;
+  }
+
   @Override
   public String toString() {
 

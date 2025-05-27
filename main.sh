@@ -78,6 +78,8 @@ fi
 if test "$1" = "--run"; then
     echo "run project: start"
 
+    echo "source file: "$mdcl_file
+    nl -b a -n rz  $mdcl_dir/$mdcl_file # print source file with line numbers
     $code_vm -cp $build_dir compiler.$main_class $mdcl_dir/$mdcl_file
 
     echo "run project: done"
