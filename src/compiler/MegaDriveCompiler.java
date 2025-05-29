@@ -9,6 +9,7 @@ import static compiler.tool.TextTool.printLine;
 import static compiler.tool.TextTool.printShortBanner;
 
 import compiler.exception.FileException;
+import compiler.exception.InterpreterException;
 import compiler.exception.ParserException;
 import compiler.exception.ValidationException;
 import compiler.model.ExpressionModel;
@@ -24,7 +25,6 @@ public class MegaDriveCompiler {
       printLine(convert(args));
 
       printShortBanner("lexer");
-
       char[] fileChars = readFile(args[0]);
       Lexer lexer = new Lexer(fileChars);
       List<Token> tokenList = lexer.tokenize();
@@ -38,14 +38,21 @@ public class MegaDriveCompiler {
       }
 
       printShortBanner("parser");
-
       Parser parser = new Parser(tokenList);
       ExpressionModel expressionModel = parser.parse();
       printLine(expressionModel);
       printFormattedAST(expressionModel.toString());
 
+      printShortBanner("interpreter");
+      Interpreter interpreter = new Interpreter();
+      Integer value = interpreter.interpret(expressionModel);
+      printLine(value);
+
       printBanner("mega drive compiler: end");
-    } catch (FileException | ParserException | ValidationException exception) {
+    } catch (FileException
+        | ParserException
+        | ValidationException
+        | InterpreterException exception) {
       printLine(exception.getMessage());
     }
   }

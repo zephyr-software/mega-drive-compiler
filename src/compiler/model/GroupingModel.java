@@ -11,6 +11,11 @@ public class GroupingModel extends ExpressionModel {
     this.value = value;
   }
 
+  public ExpressionModel getValue() {
+
+    return value;
+  }
+
   @Override
   public String toString() {
 

@@ -20,6 +20,21 @@ public class BinaryOperatorModel extends ExpressionModel {
     this.right = right;
   }
 
+  public Token getOperator() {
+
+    return operator;
+  }
+
+  public ExpressionModel getLeft() {
+
+    return left;
+  }
+
+  public ExpressionModel getRight() {
+
+    return right;
+  }
+
   @Override
   public String toString() {
 

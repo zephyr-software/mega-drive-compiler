@@ -11,7 +11,7 @@ public class Bit16Model extends ExpressionModel {
     this.value = value;
   }
 
-  private Integer getValue() {
+  public Integer getValue() {
 
     return value;
   }

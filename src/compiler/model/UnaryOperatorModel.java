@@ -15,6 +15,16 @@ public class UnaryOperatorModel extends ExpressionModel {
     this.operand = operand;
   }
 
+  public Token getOperator() {
+
+    return operator;
+  }
+
+  public ExpressionModel getOperand() {
+
+    return operand;
+  }
+
   @Override
   public String toString() {
 
