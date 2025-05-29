@@ -154,7 +154,12 @@ public class Lexer {
         // keywords
 
         Token token;
-        if (TokenType.BIT8.name().toLowerCase().equals(identifier)) {
+        if (TokenType.FALSE.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.BOOLEAN, identifier, line);
+        } else if (TokenType.TRUE.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.BOOLEAN, identifier, line);
+
+        } else if (TokenType.BIT8.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.BIT8, identifier, line);
         } else if (TokenType.BIT16.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.BIT16, identifier, line);
@@ -162,6 +167,7 @@ public class Lexer {
           token = new Token(TokenType.BIT32, identifier, line);
         } else if (TokenType.SIGN.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.SIGN, identifier, line);
+
         } else {
           token = new Token(TokenType.IDENTIFIER, identifier, line);
         }

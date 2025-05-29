@@ -3,8 +3,10 @@ package compiler;
 import compiler.exception.ParserException;
 import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
+import compiler.model.BooleanModel;
 import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
+import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
 import java.util.List;
 
@@ -71,7 +73,7 @@ public class Parser {
     return parsePrimary();
   }
 
-  // <primary> ::= <integer> | <float> | '(' <expr> ')'
+  // <primary> ::= <integer> | <float> | <boolean> | <string> | '(' <expr> ')'
   private ExpressionModel parsePrimary() throws ParserException {
     if (match(TokenType.NUMBER)) {
       Token token = previousToken();
@@ -80,6 +82,23 @@ public class Parser {
       int lineNumber = token.getLine();
 
       return new Bit16Model(value, lineNumber);
+    }
+
+    if (match(TokenType.BOOLEAN)) {
+      Token token = previousToken();
+      String lexeme = token.getLexeme();
+      Boolean value = Boolean.parseBoolean(lexeme);
+      int lineNumber = token.getLine();
+
+      return new BooleanModel(value, lineNumber);
+    }
+
+    if (match(TokenType.STRING)) {
+      Token token = previousToken();
+      String value = token.getLexeme();
+      int lineNumber = token.getLine();
+
+      return new StringModel(value, lineNumber);
     }
 
     if (match(TokenType.LEFT_ROUND_BRACKET)) {
@@ -97,7 +116,8 @@ public class Parser {
       return new GroupingModel(expressionModel, lineNumber);
     }
 
-    throw new ParserException("not supported model");
+    Token token = peek();
+    throw new ParserException("not supported model; token: " + token);
   }
 
   // work with token list
