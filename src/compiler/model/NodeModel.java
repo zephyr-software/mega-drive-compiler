@@ -12,4 +12,9 @@ public class NodeModel {
 
     return lineNumber;
   }
+
+  public Object getValue() {
+
+    return this;
+  }
 }

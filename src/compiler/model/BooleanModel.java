@@ -3,15 +3,16 @@ package compiler.model;
 // example: true
 public class BooleanModel extends ExpressionModel {
 
-  private boolean value;
+  private Boolean value;
 
-  public BooleanModel(boolean value, int lineNumber) {
+  public BooleanModel(Boolean value, int lineNumber) {
     super(lineNumber);
 
     this.value = value;
   }
 
-  public boolean getValue() {
+  @Override
+  public Boolean getValue() {
 
     return value;
   }

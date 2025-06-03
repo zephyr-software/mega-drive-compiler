@@ -45,7 +45,7 @@ public class MegaDriveCompiler {
 
       printShortBanner("interpreter");
       Interpreter interpreter = new Interpreter();
-      Integer value = interpreter.interpret(expressionModel);
+      Object value = interpreter.interpret(expressionModel);
       printLine(value);
 
       printBanner("mega drive compiler: end");

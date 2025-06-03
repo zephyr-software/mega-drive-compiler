@@ -5,13 +5,14 @@ import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
 import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
+import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
 
 public class Interpreter {
 
   public Interpreter() {}
 
-  public Integer interpret(ExpressionModel expressionModel) throws InterpreterException {
+  public Object interpret(ExpressionModel expressionModel) throws InterpreterException {
     ExpressionModel nodeModel = expressionModel;
 
     if (nodeModel instanceof Bit16Model) {
@@ -29,7 +30,7 @@ public class Interpreter {
     if (nodeModel instanceof UnaryOperatorModel) {
       UnaryOperatorModel unaryOperatorModel = (UnaryOperatorModel) nodeModel;
 
-      Integer operand = interpret(unaryOperatorModel.getOperand());
+      Integer operand = (Integer) interpret(unaryOperatorModel.getOperand());
 
       if (unaryOperatorModel.getOperator().getTokenType() == TokenType.PLUS) {
 
@@ -45,32 +46,67 @@ public class Interpreter {
     if (nodeModel instanceof BinaryOperatorModel) {
       BinaryOperatorModel binaryOperatorModel = (BinaryOperatorModel) nodeModel;
 
-      Integer leftValue = interpret(binaryOperatorModel.getLeft());
-      Integer rightValue = interpret(binaryOperatorModel.getRight());
+      Object leftValue = interpret(binaryOperatorModel.getLeft());
+      Object rightValue = interpret(binaryOperatorModel.getRight());
 
       Token operator = binaryOperatorModel.getOperator();
       TokenType operatorTokenType = operator.getTokenType();
       if (operatorTokenType == TokenType.PLUS) {
 
-        return leftValue + rightValue;
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
+
+          return ((Integer) leftValue) + ((Integer) rightValue);
+        }
+
+        if ((leftValue instanceof String) && (rightValue instanceof Integer)) {
+
+          return ((String) leftValue) + ((Integer) rightValue);
+        }
+
+        if ((leftValue instanceof Integer) || (rightValue instanceof String)) {
+
+          return ((Integer) leftValue) + ((String) rightValue);
+        }
       }
 
       if (operatorTokenType == TokenType.MINUS) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
 
-        return leftValue - rightValue;
+          return ((Integer) leftValue) - ((Integer) rightValue);
+        }
       }
 
       if (operatorTokenType == TokenType.STAR) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
 
-        return leftValue * rightValue;
+          return ((Integer) leftValue) * ((Integer) rightValue);
+        }
       }
 
       if (operatorTokenType == TokenType.SLASH) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
 
-        return leftValue / rightValue;
+          return ((Integer) leftValue) / ((Integer) rightValue);
+        }
       }
     }
 
-    throw new InterpreterException("node model is not supported");
+    if (nodeModel instanceof StringModel) {
+      StringModel stringModel = (StringModel) nodeModel;
+
+      return String.valueOf(stringModel.getValue());
+    }
+
+    int lineNumber = nodeModel.getLineNumber();
+    Class aClass = nodeModel.getClass();
+    Object value = nodeModel.getValue();
+
+    throw new InterpreterException(
+        "node model is not supported; line: "
+            + lineNumber
+            + "; class: "
+            + aClass.getSimpleName()
+            + "; value: "
+            + value);
   }
 }
