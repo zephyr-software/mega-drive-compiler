@@ -14,6 +14,9 @@ public enum TokenType {
   STAR, // *
   SLASH, // /
 
+  LESS_THAN, // <
+  GREATER_THAN, // >
+
   // 2 characters token
   EQUALS, // ==
   NOT_EQUALS, // !=

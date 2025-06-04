@@ -11,6 +11,7 @@ public class StringModel extends ExpressionModel {
     this.value = value;
   }
 
+  @Override
   public String getValue() {
 
     return value;

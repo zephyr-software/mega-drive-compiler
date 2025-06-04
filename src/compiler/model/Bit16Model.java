@@ -11,6 +11,7 @@ public class Bit16Model extends ExpressionModel {
     this.value = value;
   }
 
+  @Override
   public Integer getValue() {
 
     return value;

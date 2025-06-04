@@ -26,11 +26,14 @@ public class Parser {
     return parseExpression();
   }
 
-  // <expr> ::= <term> ( ('+'|'-') <term> )*
+  // <expr> ::= <term> ( ('+'|'-'|'<'|'>') <term> )*
   private ExpressionModel parseExpression() throws ParserException {
     ExpressionModel expressionModel = parseTerm();
 
-    while (match(TokenType.PLUS) || match(TokenType.MINUS)) {
+    while (match(TokenType.PLUS)
+        || match(TokenType.MINUS)
+        || match(TokenType.LESS_THAN)
+        || match(TokenType.GREATER_THAN)) {
       Token operator = previousToken();
       int lineNumber = operator.getLine();
       ExpressionModel right = parseTerm();

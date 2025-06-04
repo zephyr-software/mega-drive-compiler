@@ -11,6 +11,7 @@ public class GroupingModel extends ExpressionModel {
     this.value = value;
   }
 
+  @Override
   public ExpressionModel getValue() {
 
     return value;

@@ -102,6 +102,20 @@ public class Lexer {
         continue;
       }
 
+      if (character == '<') { // less than
+        Token token = new Token(TokenType.LESS_THAN, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == '>') { // greater than
+        Token token = new Token(TokenType.GREATER_THAN, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
       // 2 characters
 
       if (character == '=') { // equals / assignment

@@ -3,6 +3,7 @@ package compiler;
 import compiler.exception.InterpreterException;
 import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
+import compiler.model.BooleanModel;
 import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
 import compiler.model.StringModel;
@@ -15,31 +16,53 @@ public class Interpreter {
   public Object interpret(ExpressionModel expressionModel) throws InterpreterException {
     ExpressionModel nodeModel = expressionModel;
 
+    if (nodeModel instanceof BooleanModel) {
+      BooleanModel booleanModel = (BooleanModel) nodeModel;
+      Boolean value = booleanModel.getValue();
+
+      return value;
+    }
+
     if (nodeModel instanceof Bit16Model) {
       Bit16Model bit16Model = (Bit16Model) nodeModel;
+      Integer value = bit16Model.getValue();
 
-      return Integer.valueOf(bit16Model.getValue());
+      return value;
+    }
+
+    if (nodeModel instanceof StringModel) {
+      StringModel stringModel = (StringModel) nodeModel;
+      String value = stringModel.getValue();
+
+      return value;
     }
 
     if (nodeModel instanceof GroupingModel) {
       GroupingModel groupingModel = (GroupingModel) nodeModel;
+      ExpressionModel value = groupingModel.getValue();
 
-      return interpret(groupingModel.getValue());
+      return interpret(value);
     }
 
     if (nodeModel instanceof UnaryOperatorModel) {
       UnaryOperatorModel unaryOperatorModel = (UnaryOperatorModel) nodeModel;
 
-      Integer operand = (Integer) interpret(unaryOperatorModel.getOperand());
+      Token operator = unaryOperatorModel.getOperator();
+      TokenType tokenType = operator.getTokenType();
 
-      if (unaryOperatorModel.getOperator().getTokenType() == TokenType.PLUS) {
+      Object operand = interpret(unaryOperatorModel.getOperand());
+      if (operand instanceof Integer) {
+        Integer value = (Integer) operand;
 
-        return +operand;
-      }
+        if (tokenType == TokenType.PLUS) {
 
-      if (unaryOperatorModel.getOperator().getTokenType() == TokenType.MINUS) {
+          return value;
+        }
 
-        return -operand;
+        if (tokenType == TokenType.MINUS) {
+
+          return -value;
+        }
       }
     }
 
@@ -50,51 +73,58 @@ public class Interpreter {
       Object rightValue = interpret(binaryOperatorModel.getRight());
 
       Token operator = binaryOperatorModel.getOperator();
-      TokenType operatorTokenType = operator.getTokenType();
-      if (operatorTokenType == TokenType.PLUS) {
-
+      TokenType tokenType = operator.getTokenType();
+      if (tokenType == TokenType.PLUS) {
         if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
 
-          return ((Integer) leftValue) + ((Integer) rightValue);
+          return (Integer) leftValue + (Integer) rightValue;
         }
 
         if ((leftValue instanceof String) && (rightValue instanceof Integer)) {
 
-          return ((String) leftValue) + ((Integer) rightValue);
+          return (String) leftValue + (Integer) rightValue;
         }
 
         if ((leftValue instanceof Integer) || (rightValue instanceof String)) {
 
-          return ((Integer) leftValue) + ((String) rightValue);
+          return (Integer) leftValue + (String) rightValue;
         }
       }
 
-      if (operatorTokenType == TokenType.MINUS) {
+      if (tokenType == TokenType.MINUS) {
         if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
 
-          return ((Integer) leftValue) - ((Integer) rightValue);
+          return (Integer) leftValue - (Integer) rightValue;
         }
       }
 
-      if (operatorTokenType == TokenType.STAR) {
+      if (tokenType == TokenType.STAR) {
         if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
 
-          return ((Integer) leftValue) * ((Integer) rightValue);
+          return (Integer) leftValue * (Integer) rightValue;
         }
       }
 
-      if (operatorTokenType == TokenType.SLASH) {
+      if (tokenType == TokenType.SLASH) {
         if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
 
-          return ((Integer) leftValue) / ((Integer) rightValue);
+          return (Integer) leftValue / (Integer) rightValue;
         }
       }
-    }
 
-    if (nodeModel instanceof StringModel) {
-      StringModel stringModel = (StringModel) nodeModel;
+      if (tokenType == TokenType.LESS_THAN) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
 
-      return String.valueOf(stringModel.getValue());
+          return (Integer) leftValue < (Integer) rightValue;
+        }
+      }
+
+      if (tokenType == TokenType.GREATER_THAN) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
+
+          return (Integer) leftValue > (Integer) rightValue;
+        }
+      }
     }
 
     int lineNumber = nodeModel.getLineNumber();
