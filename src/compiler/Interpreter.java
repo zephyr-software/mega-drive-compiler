@@ -4,8 +4,8 @@ import compiler.exception.InterpreterException;
 import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
 import compiler.model.BooleanModel;
-import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
+import compiler.model.NodeModel;
 import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
 
@@ -13,8 +13,7 @@ public class Interpreter {
 
   public Interpreter() {}
 
-  public Object interpret(ExpressionModel expressionModel) throws InterpreterException {
-    ExpressionModel nodeModel = expressionModel;
+  public Object interpret(NodeModel nodeModel) throws InterpreterException {
 
     if (nodeModel instanceof BooleanModel) {
       BooleanModel booleanModel = (BooleanModel) nodeModel;
@@ -39,7 +38,7 @@ public class Interpreter {
 
     if (nodeModel instanceof GroupingModel) {
       GroupingModel groupingModel = (GroupingModel) nodeModel;
-      ExpressionModel value = groupingModel.getValue();
+      NodeModel value = groupingModel.getValue();
 
       return interpret(value);
     }
@@ -62,6 +61,15 @@ public class Interpreter {
         if (tokenType == TokenType.MINUS) {
 
           return -value;
+        }
+      }
+
+      if (operand instanceof Boolean) {
+        Boolean value = (Boolean) operand;
+
+        if (tokenType == TokenType.NOT) {
+
+          return !value;
         }
       }
     }
@@ -123,6 +131,51 @@ public class Interpreter {
         if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
 
           return (Integer) leftValue > (Integer) rightValue;
+        }
+      }
+
+      if (tokenType == TokenType.LESS_THAN_OR_EQUALS) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
+
+          return (Integer) leftValue <= (Integer) rightValue;
+        }
+      }
+
+      if (tokenType == TokenType.GREATER_THAN_OR_EQUALS) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
+
+          return (Integer) leftValue >= (Integer) rightValue;
+        }
+      }
+
+      if (tokenType == TokenType.MODULO) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
+
+          return (Integer) leftValue % (Integer) rightValue;
+        }
+      }
+
+      if (tokenType == TokenType.EQUALS) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
+
+          return (Integer) leftValue == (Integer) rightValue;
+        }
+
+        if ((leftValue instanceof Boolean) && (rightValue instanceof Boolean)) {
+
+          return (Boolean) leftValue == (Boolean) rightValue;
+        }
+      }
+
+      if (tokenType == TokenType.NOT_EQUALS) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof Integer)) {
+
+          return (Integer) leftValue != (Integer) rightValue;
+        }
+
+        if ((leftValue instanceof Boolean) && (rightValue instanceof Boolean)) {
+
+          return (Boolean) leftValue == (Boolean) rightValue;
         }
       }
     }

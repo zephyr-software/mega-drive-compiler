@@ -102,15 +102,8 @@ public class Lexer {
         continue;
       }
 
-      if (character == '<') { // less than
-        Token token = new Token(TokenType.LESS_THAN, character + "", line);
-        tokenList.add(token);
-
-        continue;
-      }
-
-      if (character == '>') { // greater than
-        Token token = new Token(TokenType.GREATER_THAN, character + "", line);
+      if (character == '%') { // modulo
+        Token token = new Token(TokenType.MODULO, character + "", line);
         tokenList.add(token);
 
         continue;
@@ -118,8 +111,36 @@ public class Lexer {
 
       // 2 characters
 
+      if (character == '<') { // less than
+        if (match('=')) { // less than or equals
+          Token token = new Token(TokenType.LESS_THAN_OR_EQUALS, character + "", line);
+          tokenList.add(token);
+
+          continue;
+        }
+
+        Token token = new Token(TokenType.LESS_THAN, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == '>') { // greater than
+        if (match('=')) { // greater than or equals
+          Token token = new Token(TokenType.GREATER_THAN_OR_EQUALS, character + "=", line);
+          tokenList.add(token);
+
+          continue;
+        }
+
+        Token token = new Token(TokenType.GREATER_THAN, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
       if (character == '=') { // equals / assignment
-        if (character == '=') { // equals / equals
+        if (match('=')) { // equals / equals
           Token token = new Token(TokenType.EQUALS, character + "=", line);
           tokenList.add(token);
 
@@ -140,7 +161,10 @@ public class Lexer {
           continue;
         }
 
-        System.out.println("lexer warning - not supported yet character: " + character);
+        Token token = new Token(TokenType.NOT, character + "", line);
+        tokenList.add(token);
+
+        continue;
       }
 
       // numbers

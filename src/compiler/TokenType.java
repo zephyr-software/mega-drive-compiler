@@ -13,6 +13,8 @@ public enum TokenType {
   MINUS, // -
   STAR, // *
   SLASH, // /
+  MODULO, // %
+  NOT, // !
 
   LESS_THAN, // <
   GREATER_THAN, // >
@@ -20,6 +22,9 @@ public enum TokenType {
   // 2 characters token
   EQUALS, // ==
   NOT_EQUALS, // !=
+
+  LESS_THAN_OR_EQUALS, // <=
+  GREATER_THAN_OR_EQUALS, // >=
 
   BOOLEAN, // true or false
   TRUE, // true

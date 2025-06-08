@@ -3,16 +3,16 @@ package compiler.model;
 // example: ( <expr> )
 public class GroupingModel extends ExpressionModel {
 
-  private ExpressionModel value;
+  private NodeModel value;
 
-  public GroupingModel(ExpressionModel value, int lineNumber) {
+  public GroupingModel(NodeModel value, int lineNumber) {
     super(lineNumber);
 
     this.value = value;
   }
 
   @Override
-  public ExpressionModel getValue() {
+  public NodeModel getValue() {
 
     return value;
   }

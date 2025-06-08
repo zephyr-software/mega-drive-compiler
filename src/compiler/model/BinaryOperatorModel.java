@@ -7,11 +7,10 @@ public class BinaryOperatorModel extends ExpressionModel {
 
   private Token operator;
 
-  private ExpressionModel left;
-  private ExpressionModel right;
+  private NodeModel left;
+  private NodeModel right;
 
-  public BinaryOperatorModel(
-      Token operator, ExpressionModel left, ExpressionModel right, int lineNumber) {
+  public BinaryOperatorModel(Token operator, NodeModel left, NodeModel right, int lineNumber) {
     super(lineNumber);
 
     this.operator = operator;
@@ -25,12 +24,12 @@ public class BinaryOperatorModel extends ExpressionModel {
     return operator;
   }
 
-  public ExpressionModel getLeft() {
+  public NodeModel getLeft() {
 
     return left;
   }
 
-  public ExpressionModel getRight() {
+  public NodeModel getRight() {
 
     return right;
   }

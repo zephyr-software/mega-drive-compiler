@@ -12,7 +12,7 @@ import compiler.exception.FileException;
 import compiler.exception.InterpreterException;
 import compiler.exception.ParserException;
 import compiler.exception.ValidationException;
-import compiler.model.ExpressionModel;
+import compiler.model.NodeModel;
 import java.util.List;
 
 public class MegaDriveCompiler {
@@ -39,13 +39,13 @@ public class MegaDriveCompiler {
 
       printShortBanner("parser");
       Parser parser = new Parser(tokenList);
-      ExpressionModel expressionModel = parser.parse();
-      printLine(expressionModel);
-      printFormattedAST(expressionModel.toString());
+      NodeModel nodeModel = parser.parse();
+      printLine(nodeModel);
+      printFormattedAST(nodeModel.toString());
 
       printShortBanner("interpreter");
       Interpreter interpreter = new Interpreter();
-      Object value = interpreter.interpret(expressionModel);
+      Object value = interpreter.interpret(nodeModel);
       printLine(value);
 
       printBanner("mega drive compiler: end");

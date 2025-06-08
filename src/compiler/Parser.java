@@ -6,6 +6,7 @@ import compiler.model.Bit16Model;
 import compiler.model.BooleanModel;
 import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
+import compiler.model.NodeModel;
 import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
 import java.util.List;
@@ -21,51 +22,87 @@ public class Parser {
   }
 
   // recursive descent parser algorithm
-  public ExpressionModel parse() throws ParserException {
+  public NodeModel parse() throws ParserException {
 
-    return parseExpression();
+    return parseEquality();
   }
 
-  // <expr> ::= <term> ( ('+'|'-'|'<'|'>') <term> )*
-  private ExpressionModel parseExpression() throws ParserException {
-    ExpressionModel expressionModel = parseTerm();
+  // <equality> ::= <comparison> ( ( "!=" | "==" ) <comparison> )*
+  public ExpressionModel parseEquality() throws ParserException {
+    ExpressionModel expressionModel = parseComparison();
 
-    while (match(TokenType.PLUS)
-        || match(TokenType.MINUS)
-        || match(TokenType.LESS_THAN)
-        || match(TokenType.GREATER_THAN)) {
+    while (match(TokenType.NOT_EQUALS) || match(TokenType.EQUALS)) {
       Token operator = previousToken();
       int lineNumber = operator.getLine();
-      ExpressionModel right = parseTerm();
+      ExpressionModel right = parseComparison();
       expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
     }
 
     return expressionModel;
   }
 
-  // <term> ::= <factor> ( ('*'|'/') <factor> )*
-  private ExpressionModel parseTerm() throws ParserException {
-    ExpressionModel expressionModel = parseFactor();
+  // <comparison> ::= <addition> ( ( "<" | "<=" | ">" | ">=" ) <addition> )*
+  public ExpressionModel parseComparison() throws ParserException {
+    ExpressionModel expressionModel = parseAddition();
 
-    while (match(TokenType.STAR) || match(TokenType.SLASH)) {
+    while (match(TokenType.LESS_THAN)
+        || match(TokenType.LESS_THAN_OR_EQUALS)
+        || match(TokenType.GREATER_THAN)
+        || match(TokenType.GREATER_THAN_OR_EQUALS)) {
       Token operator = previousToken();
       int lineNumber = operator.getLine();
-      ExpressionModel right = parseFactor();
+      ExpressionModel right = parseAddition();
       expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
     }
 
     return expressionModel;
   }
 
-  // <factor> ::= <unary>
-  private ExpressionModel parseFactor() throws ParserException {
+  // <addition> ::= <multiplication> ( ( "-" | "+" ) <multiplication> )*
+  private ExpressionModel parseAddition() throws ParserException {
+    ExpressionModel expressionModel = parseMultiplication();
 
-    return parseUnary();
+    while (match(TokenType.MINUS) || match(TokenType.PLUS)) {
+      Token operator = previousToken();
+      int lineNumber = operator.getLine();
+      ExpressionModel right = parseMultiplication();
+      expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
+    }
+
+    return expressionModel;
   }
 
-  // <unary> ::= ('+'|'-') <unary> | <primary>
+  // <multiplication> ::= <modulo> ( ( "/" | "*" ) <modulo> )*
+  private ExpressionModel parseMultiplication() throws ParserException {
+    ExpressionModel expressionModel = parseModulo();
+
+    while (match(TokenType.SLASH) || match(TokenType.STAR)) {
+      Token operator = previousToken();
+      int lineNumber = operator.getLine();
+      ExpressionModel right = parseModulo();
+      expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
+    }
+
+    return expressionModel;
+  }
+
+  // <modulo> ::= <unary> ( "%" <unary> )*
+  private ExpressionModel parseModulo() throws ParserException {
+    ExpressionModel expressionModel = parseUnary();
+
+    while (match(TokenType.MODULO)) {
+      Token operator = previousToken();
+      int lineNumber = operator.getLine();
+      ExpressionModel right = parseUnary();
+      expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
+    }
+
+    return expressionModel;
+  }
+
+  // <unary> ::= ("!"|'-'|'+') <unary> | <primary>
   private ExpressionModel parseUnary() throws ParserException {
-    if (match(TokenType.MINUS) | match(TokenType.PLUS)) {
+    if (match(TokenType.NOT) | match(TokenType.MINUS) | match(TokenType.PLUS)) {
       Token operator = previousToken();
       int lineNumber = operator.getLine();
       ExpressionModel operand = parseUnary();
@@ -105,7 +142,7 @@ public class Parser {
     }
 
     if (match(TokenType.LEFT_ROUND_BRACKET)) {
-      ExpressionModel expressionModel = parseExpression();
+      NodeModel nodeModel = parse();
 
       if (!match(TokenType.RIGHT_ROUND_BRACKET)) {
 
@@ -116,7 +153,7 @@ public class Parser {
       Token token = previousToken();
       int lineNumber = token.getLine();
 
-      return new GroupingModel(expressionModel, lineNumber);
+      return new GroupingModel(nodeModel, lineNumber);
     }
 
     Token token = peek();

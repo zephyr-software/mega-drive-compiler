@@ -6,9 +6,9 @@ import compiler.Token;
 public class UnaryOperatorModel extends ExpressionModel {
 
   private Token operator;
-  private ExpressionModel operand;
+  private NodeModel operand;
 
-  public UnaryOperatorModel(Token operator, ExpressionModel operand, int lineNumber) {
+  public UnaryOperatorModel(Token operator, NodeModel operand, int lineNumber) {
     super(lineNumber);
 
     this.operator = operator;
@@ -20,7 +20,7 @@ public class UnaryOperatorModel extends ExpressionModel {
     return operator;
   }
 
-  public ExpressionModel getOperand() {
+  public NodeModel getOperand() {
 
     return operand;
   }
