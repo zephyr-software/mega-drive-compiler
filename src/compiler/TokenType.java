@@ -26,6 +26,9 @@ public enum TokenType {
   LESS_THAN_OR_EQUALS, // <=
   GREATER_THAN_OR_EQUALS, // >=
 
+  AND, // and
+  OR, // or
+
   BOOLEAN, // true or false
   TRUE, // true
   FALSE, // false

@@ -6,6 +6,7 @@ import compiler.model.Bit16Model;
 import compiler.model.BooleanModel;
 import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
+import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
 import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
@@ -24,7 +25,35 @@ public class Parser {
   // recursive descent parser algorithm
   public NodeModel parse() throws ParserException {
 
-    return parseEquality();
+    return parseOr();
+  }
+
+  // <logical_or> ::= <logical_and> ( "or" <logical_and> )*
+  public ExpressionModel parseOr() throws ParserException {
+    ExpressionModel expressionModel = parseAnd();
+
+    while (match(TokenType.OR)) {
+      Token operator = previousToken();
+      int lineNumber = operator.getLine();
+      ExpressionModel right = parseAnd();
+      expressionModel = new LogicalOperatorModel(operator, expressionModel, right, lineNumber);
+    }
+
+    return expressionModel;
+  }
+
+  // <logical_and> ::= <equality> ( "and" <equality> )*
+  public ExpressionModel parseAnd() throws ParserException {
+    ExpressionModel expressionModel = parseEquality();
+
+    while (match(TokenType.AND)) {
+      Token operator = previousToken();
+      int lineNumber = operator.getLine();
+      ExpressionModel right = parseEquality();
+      expressionModel = new LogicalOperatorModel(operator, expressionModel, right, lineNumber);
+    }
+
+    return expressionModel;
   }
 
   // <equality> ::= <comparison> ( ( "!=" | "==" ) <comparison> )*

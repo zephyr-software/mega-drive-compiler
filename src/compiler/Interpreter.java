@@ -5,6 +5,7 @@ import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
 import compiler.model.BooleanModel;
 import compiler.model.GroupingModel;
+import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
 import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
@@ -176,6 +177,29 @@ public class Interpreter {
         if ((leftValue instanceof Boolean) && (rightValue instanceof Boolean)) {
 
           return (Boolean) leftValue == (Boolean) rightValue;
+        }
+      }
+    }
+
+    if (nodeModel instanceof LogicalOperatorModel) {
+      LogicalOperatorModel logicalOperatorModel = (LogicalOperatorModel) nodeModel;
+
+      Object leftValue = interpret(logicalOperatorModel.getLeft());
+      Object rightValue = interpret(logicalOperatorModel.getRight());
+
+      Token operator = logicalOperatorModel.getOperator();
+      TokenType tokenType = operator.getTokenType();
+      if (tokenType == TokenType.AND) {
+        if ((leftValue instanceof Boolean) && (rightValue instanceof Boolean)) {
+
+          return (Boolean) leftValue && (Boolean) rightValue;
+        }
+      }
+
+      if (tokenType == TokenType.OR) {
+        if ((leftValue instanceof Boolean) && (rightValue instanceof Boolean)) {
+
+          return (Boolean) leftValue || (Boolean) rightValue;
         }
       }
     }

@@ -192,7 +192,12 @@ public class Lexer {
         // keywords
 
         Token token;
-        if (TokenType.FALSE.name().toLowerCase().equals(identifier)) {
+        if (TokenType.AND.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.AND, identifier, line);
+        } else if (TokenType.OR.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.OR, identifier, line);
+
+        } else if (TokenType.FALSE.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.BOOLEAN, identifier, line);
         } else if (TokenType.TRUE.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.BOOLEAN, identifier, line);
