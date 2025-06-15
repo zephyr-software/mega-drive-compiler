@@ -4,11 +4,16 @@ import compiler.exception.InterpreterException;
 import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
 import compiler.model.BooleanModel;
+import compiler.model.DebugPrintStatementModel;
 import compiler.model.GroupingModel;
 import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
+import compiler.model.StatementListModel;
+import compiler.model.StatementModel;
 import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Interpreter {
 
@@ -202,6 +207,28 @@ public class Interpreter {
           return (Boolean) leftValue || (Boolean) rightValue;
         }
       }
+    }
+
+    if (nodeModel instanceof StatementListModel) {
+      StatementListModel statementListModel = (StatementListModel) nodeModel;
+      List<StatementModel> statementModelList = statementListModel.getStatementModelList();
+
+      List<Object> objectList = new ArrayList<Object>();
+      for (StatementModel statementModel : statementModelList) {
+        Object object = interpret(statementModel);
+        objectList.add(object);
+      }
+
+      return objectList;
+    }
+
+    if (nodeModel instanceof DebugPrintStatementModel) {
+      DebugPrintStatementModel debugPrintStatementModel = (DebugPrintStatementModel) nodeModel;
+
+      Object object = interpret(debugPrintStatementModel.getExpressionModel());
+      System.out.println(object);
+
+      return object;
     }
 
     int lineNumber = nodeModel.getLineNumber();

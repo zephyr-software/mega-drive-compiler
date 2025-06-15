@@ -41,5 +41,7 @@ public enum TokenType {
   BIT16,
   BIT32,
   SIGN,
-  FUNCTION
+  FUNCTION,
+
+  DEBUG_PRINT
 }

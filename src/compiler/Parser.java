@@ -4,12 +4,16 @@ import compiler.exception.ParserException;
 import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
 import compiler.model.BooleanModel;
+import compiler.model.DebugPrintStatementModel;
 import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
 import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
+import compiler.model.StatementListModel;
+import compiler.model.StatementModel;
 import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -25,11 +29,60 @@ public class Parser {
   // recursive descent parser algorithm
   public NodeModel parse() throws ParserException {
 
+    return parseProgram();
+  }
+
+  // <program> ::= <statement>*
+  private NodeModel parseProgram() throws ParserException {
+
+    return parseStatementList();
+  }
+
+  private StatementListModel parseStatementList() throws ParserException {
+    List<StatementModel> statementModelList = new ArrayList<StatementModel>();
+
+    int lineNumber = 1;
+    while (cursor < tokenList.size()) {
+      StatementModel statementModel = parseStatement();
+      statementModelList.add(statementModel);
+
+      lineNumber = statementModel.getLineNumber();
+    }
+
+    return new StatementListModel(statementModelList, lineNumber);
+  }
+
+  // predictive parsing
+  private StatementModel parseStatement() throws ParserException {
+    Token token = peek();
+    if (token.getTokenType() == TokenType.DEBUG_PRINT) {
+
+      return parseDebugPrint();
+    }
+
+    throw new ParserException("bad statement; token:" + token);
+  }
+
+  // <debug_print_statement> ::= "debug_print" <expression>
+  private StatementModel parseDebugPrint() throws ParserException {
+    if (match(TokenType.DEBUG_PRINT)) {
+      ExpressionModel expressionModel = parseExpression();
+      int lineNumber = expressionModel.getLineNumber();
+      StatementModel statementModel = new DebugPrintStatementModel(expressionModel, lineNumber);
+
+      return statementModel;
+    }
+
+    throw new ParserException("no debug print statement found");
+  }
+
+  private ExpressionModel parseExpression() throws ParserException {
+
     return parseOr();
   }
 
   // <logical_or> ::= <logical_and> ( "or" <logical_and> )*
-  public ExpressionModel parseOr() throws ParserException {
+  private ExpressionModel parseOr() throws ParserException {
     ExpressionModel expressionModel = parseAnd();
 
     while (match(TokenType.OR)) {
@@ -43,7 +96,7 @@ public class Parser {
   }
 
   // <logical_and> ::= <equality> ( "and" <equality> )*
-  public ExpressionModel parseAnd() throws ParserException {
+  private ExpressionModel parseAnd() throws ParserException {
     ExpressionModel expressionModel = parseEquality();
 
     while (match(TokenType.AND)) {
@@ -57,7 +110,7 @@ public class Parser {
   }
 
   // <equality> ::= <comparison> ( ( "!=" | "==" ) <comparison> )*
-  public ExpressionModel parseEquality() throws ParserException {
+  private ExpressionModel parseEquality() throws ParserException {
     ExpressionModel expressionModel = parseComparison();
 
     while (match(TokenType.NOT_EQUALS) || match(TokenType.EQUALS)) {
@@ -71,7 +124,7 @@ public class Parser {
   }
 
   // <comparison> ::= <addition> ( ( "<" | "<=" | ">" | ">=" ) <addition> )*
-  public ExpressionModel parseComparison() throws ParserException {
+  private ExpressionModel parseComparison() throws ParserException {
     ExpressionModel expressionModel = parseAddition();
 
     while (match(TokenType.LESS_THAN)
@@ -171,7 +224,7 @@ public class Parser {
     }
 
     if (match(TokenType.LEFT_ROUND_BRACKET)) {
-      NodeModel nodeModel = parse();
+      NodeModel nodeModel = parseExpression();
 
       if (!match(TokenType.RIGHT_ROUND_BRACKET)) {
 
