@@ -1,3 +1,4 @@
-debug_print 1 + 2
-debug_print 3 * 4
-debug_print("test" + 1)
+debug_print 1
+debug_print_line 2 + 3
+debug_print_line("test" + 1)
+debug_print_line("string1" + "string2")

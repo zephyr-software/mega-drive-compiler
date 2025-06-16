@@ -4,6 +4,7 @@ import compiler.exception.InterpreterException;
 import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
 import compiler.model.BooleanModel;
+import compiler.model.DebugPrintLineStatementModel;
 import compiler.model.DebugPrintStatementModel;
 import compiler.model.GroupingModel;
 import compiler.model.LogicalOperatorModel;
@@ -99,9 +100,14 @@ public class Interpreter {
           return (String) leftValue + (Integer) rightValue;
         }
 
-        if ((leftValue instanceof Integer) || (rightValue instanceof String)) {
+        if ((leftValue instanceof Integer) && (rightValue instanceof String)) {
 
           return (Integer) leftValue + (String) rightValue;
+        }
+
+        if ((leftValue instanceof String) && (rightValue instanceof String)) {
+
+          return (String) leftValue + (String) rightValue;
         }
       }
 
@@ -226,6 +232,16 @@ public class Interpreter {
       DebugPrintStatementModel debugPrintStatementModel = (DebugPrintStatementModel) nodeModel;
 
       Object object = interpret(debugPrintStatementModel.getExpressionModel());
+      System.out.print(object);
+
+      return object;
+    }
+
+    if (nodeModel instanceof DebugPrintLineStatementModel) {
+      DebugPrintLineStatementModel debugPrintLineStatementModel =
+          (DebugPrintLineStatementModel) nodeModel;
+
+      Object object = interpret(debugPrintLineStatementModel.getExpressionModel());
       System.out.println(object);
 
       return object;

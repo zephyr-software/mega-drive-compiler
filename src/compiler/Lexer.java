@@ -213,6 +213,8 @@ public class Lexer {
 
         } else if (TokenType.DEBUG_PRINT.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.DEBUG_PRINT, identifier, line);
+        } else if (TokenType.DEBUG_PRINT_LINE.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.DEBUG_PRINT_LINE, identifier, line);
 
         } else {
           token = new Token(TokenType.IDENTIFIER, identifier, line);

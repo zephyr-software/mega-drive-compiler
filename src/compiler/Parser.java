@@ -4,6 +4,7 @@ import compiler.exception.ParserException;
 import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
 import compiler.model.BooleanModel;
+import compiler.model.DebugPrintLineStatementModel;
 import compiler.model.DebugPrintStatementModel;
 import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
@@ -55,7 +56,8 @@ public class Parser {
   // predictive parsing
   private StatementModel parseStatement() throws ParserException {
     Token token = peek();
-    if (token.getTokenType() == TokenType.DEBUG_PRINT) {
+    TokenType tokenType = token.getTokenType();
+    if (tokenType == TokenType.DEBUG_PRINT || tokenType == TokenType.DEBUG_PRINT_LINE) {
 
       return parseDebugPrint();
     }
@@ -63,12 +65,20 @@ public class Parser {
     throw new ParserException("bad statement; token:" + token);
   }
 
-  // <debug_print_statement> ::= "debug_print" <expression>
+  // <debug_print_statement> ::= "debug_print" | "debug_print_line"  <expression>
   private StatementModel parseDebugPrint() throws ParserException {
     if (match(TokenType.DEBUG_PRINT)) {
       ExpressionModel expressionModel = parseExpression();
       int lineNumber = expressionModel.getLineNumber();
       StatementModel statementModel = new DebugPrintStatementModel(expressionModel, lineNumber);
+
+      return statementModel;
+    }
+
+    if (match(TokenType.DEBUG_PRINT_LINE)) {
+      ExpressionModel expressionModel = parseExpression();
+      int lineNumber = expressionModel.getLineNumber();
+      StatementModel statementModel = new DebugPrintLineStatementModel(expressionModel, lineNumber);
 
       return statementModel;
     }

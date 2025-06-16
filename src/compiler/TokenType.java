@@ -43,5 +43,6 @@ public enum TokenType {
   SIGN,
   FUNCTION,
 
-  DEBUG_PRINT
+  DEBUG_PRINT,
+  DEBUG_PRINT_LINE
 }
