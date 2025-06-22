@@ -44,5 +44,10 @@ public enum TokenType {
   FUNCTION,
 
   DEBUG_PRINT,
-  DEBUG_PRINT_LINE
+  DEBUG_PRINT_LINE,
+
+  IF,
+  THEN,
+  ELSE,
+  END
 }

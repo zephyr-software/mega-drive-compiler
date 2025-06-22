@@ -8,6 +8,7 @@ import compiler.model.DebugPrintLineStatementModel;
 import compiler.model.DebugPrintStatementModel;
 import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
+import compiler.model.IfStatementModel;
 import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
 import compiler.model.StatementListModel;
@@ -43,7 +44,7 @@ public class Parser {
     List<StatementModel> statementModelList = new ArrayList<StatementModel>();
 
     int lineNumber = 1;
-    while (cursor < tokenList.size()) {
+    while (cursor < tokenList.size() && !isNext(TokenType.ELSE) && !isNext(TokenType.END)) {
       StatementModel statementModel = parseStatement();
       statementModelList.add(statementModel);
 
@@ -62,7 +63,33 @@ public class Parser {
       return parseDebugPrint();
     }
 
+    if (tokenType == TokenType.IF) {
+
+      return parseIf();
+    }
+
     throw new ParserException("bad statement; token:" + token);
+  }
+
+  // <if_statement> ::= "if" <expression> "then" <statement_list> ( "else" <statement_list> )? "end"
+  private StatementModel parseIf() throws ParserException {
+    expect(TokenType.IF);
+    ExpressionModel testExpressionModel = parseExpression();
+
+    expect(TokenType.THEN);
+    StatementListModel thenStatementListModel = parseStatementList();
+
+    StatementListModel elseStatementListModel = null;
+    if (isNext(TokenType.ELSE)) {
+      advance();
+      elseStatementListModel = parseStatementList();
+    }
+
+    Token token = expect(TokenType.END);
+    int lineNumber = token.getLine();
+
+    return new IfStatementModel(
+        testExpressionModel, thenStatementListModel, elseStatementListModel, lineNumber);
   }
 
   // <debug_print_statement> ::= "debug_print" | "debug_print_line"  <expression>

@@ -113,7 +113,7 @@ public class Lexer {
 
       if (character == '<') { // less than
         if (match('=')) { // less than or equals
-          Token token = new Token(TokenType.LESS_THAN_OR_EQUALS, character + "", line);
+          Token token = new Token(TokenType.LESS_THAN_OR_EQUALS, character + "=", line);
           tokenList.add(token);
 
           continue;
@@ -215,6 +215,15 @@ public class Lexer {
           token = new Token(TokenType.DEBUG_PRINT, identifier, line);
         } else if (TokenType.DEBUG_PRINT_LINE.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.DEBUG_PRINT_LINE, identifier, line);
+
+        } else if (TokenType.IF.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.IF, identifier, line);
+        } else if (TokenType.THEN.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.THEN, identifier, line);
+        } else if (TokenType.ELSE.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.ELSE, identifier, line);
+        } else if (TokenType.END.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.END, identifier, line);
 
         } else {
           token = new Token(TokenType.IDENTIFIER, identifier, line);

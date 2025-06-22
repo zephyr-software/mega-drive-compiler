@@ -6,7 +6,9 @@ import compiler.model.Bit16Model;
 import compiler.model.BooleanModel;
 import compiler.model.DebugPrintLineStatementModel;
 import compiler.model.DebugPrintStatementModel;
+import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
+import compiler.model.IfStatementModel;
 import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
 import compiler.model.StatementListModel;
@@ -245,6 +247,23 @@ public class Interpreter {
       System.out.println(object);
 
       return object;
+    }
+
+    if (nodeModel instanceof IfStatementModel) {
+      IfStatementModel ifStatementModel = (IfStatementModel) nodeModel;
+
+      ExpressionModel testExpressionModel = ifStatementModel.getTestExpressionModel();
+      Boolean isConditionAccepted = (Boolean) interpret(testExpressionModel);
+
+      if (isConditionAccepted) {
+        StatementListModel thenStatementListModel = ifStatementModel.getThenStatementListModel();
+
+        return interpret(thenStatementListModel);
+      } else {
+        StatementListModel elseStatementListModel = ifStatementModel.getElseStatementListModel();
+
+        return interpret(elseStatementListModel);
+      }
     }
 
     int lineNumber = nodeModel.getLineNumber();

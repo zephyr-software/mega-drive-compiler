@@ -1,4 +1,7 @@
-debug_print 1
-debug_print_line 2 + 3
-debug_print_line("test" + 1)
-debug_print_line("string1" + "string2")
+if 2 <= 2 then
+  debug_print_line "line 1 - then block"
+  debug_print_line "line 2 - then block"
+else
+  debug_print_line "line 1 - else block"
+  debug_print_line "line 2 - else block"
+end
