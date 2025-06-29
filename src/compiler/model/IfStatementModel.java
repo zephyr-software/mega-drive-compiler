@@ -40,7 +40,7 @@ public class IfStatementModel extends StatementModel {
   @Override
   public String toString() {
 
-    return "if_statement ["
+    return "^if_statement ["
         + testExpressionModel
         + "; "
         + thenStatementListModel

@@ -1,6 +1,7 @@
 package compiler;
 
 import compiler.exception.ParserException;
+import compiler.model.AssignmentStatementModel;
 import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
 import compiler.model.BooleanModel;
@@ -8,6 +9,7 @@ import compiler.model.DebugPrintLineStatementModel;
 import compiler.model.DebugPrintStatementModel;
 import compiler.model.ExpressionModel;
 import compiler.model.GroupingModel;
+import compiler.model.IdentifierModel;
 import compiler.model.IfStatementModel;
 import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
@@ -66,6 +68,16 @@ public class Parser {
     if (tokenType == TokenType.IF) {
 
       return parseIf();
+    }
+
+    // assignment
+    ExpressionModel left = parseExpression();
+    if (match(TokenType.ASSIGNMENT)) {
+      ExpressionModel right = parseExpression();
+      token = previousToken();
+      int lineNumber = token.getLine();
+
+      return new AssignmentStatementModel(left, right, lineNumber);
     }
 
     throw new ParserException("bad statement; token:" + token);
@@ -232,7 +244,7 @@ public class Parser {
     return parsePrimary();
   }
 
-  // <primary> ::= <integer> | <float> | <boolean> | <string> | '(' <expr> ')'
+  // <primary> ::= <integer> | <boolean> | <string> | <identifier> '(' <expr> ')'
   private ExpressionModel parsePrimary() throws ParserException {
     if (match(TokenType.NUMBER)) {
       Token token = previousToken();
@@ -273,6 +285,14 @@ public class Parser {
       int lineNumber = token.getLine();
 
       return new GroupingModel(nodeModel, lineNumber);
+    }
+
+    if (match(TokenType.IDENTIFIER)) {
+      Token token = previousToken();
+      String name = token.getLexeme();
+      int lineNumber = token.getLine();
+
+      return new IdentifierModel(name, lineNumber);
     }
 
     Token token = peek();

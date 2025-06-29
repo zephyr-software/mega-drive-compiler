@@ -1,7 +1,28 @@
-if 2 <= 2 then
-  debug_print_line "line 1 - then block"
-  debug_print_line "line 2 - then block"
-else
-  debug_print_line "line 1 - else block"
-  debug_print_line "line 2 - else block"
+x = 2
+x = x + 4
+y = x + 8
+z = x + y
+
+debug_print_line "x == " + x
+debug_print_line "y == " + y
+debug_print_line "z == " + z
+
+; undeclared identifier: a line:11
+; b = a + 1
+
+if x < y then
+  a = y + 10
+  b = a + 1
+  x = x + a + b
+
+; undeclared identifier: v line:19
+; y = v
+
+  debug_print_line "a == " + a
+  debug_print_line "b == " + b
+  debug_print_line "[inside if] x == " + x
 end
+
+debug_print_line "[outside if] x == " + x
+
+debug_print_line "end"
