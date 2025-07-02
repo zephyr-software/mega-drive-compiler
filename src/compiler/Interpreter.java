@@ -17,6 +17,7 @@ import compiler.model.StatementListModel;
 import compiler.model.StatementModel;
 import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
+import compiler.model.WhileStatementModel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -298,6 +299,24 @@ public class Interpreter {
 
         return interpret(elseStatementListModel, new Environment(environment));
       }
+    }
+
+    if (nodeModel instanceof WhileStatementModel) {
+      WhileStatementModel whileStatementModel = (WhileStatementModel) nodeModel;
+
+      Environment whileEnvironment = new Environment(environment);
+      Boolean isConditionAccepted = false;
+      do {
+        ExpressionModel testExpressionModel = whileStatementModel.getTestExpressionModel();
+        isConditionAccepted = (Boolean) interpret(testExpressionModel, environment);
+
+        if (isConditionAccepted) {
+          StatementListModel statementListModel = whileStatementModel.getStatementListModel();
+          interpret(statementListModel, whileEnvironment);
+        }
+      } while (isConditionAccepted);
+
+      return null;
     }
 
     if (nodeModel == null) {

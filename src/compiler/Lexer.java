@@ -225,6 +225,11 @@ public class Lexer {
         } else if (TokenType.END.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.END, identifier, line);
 
+        } else if (TokenType.WHILE.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.WHILE, identifier, line);
+        } else if (TokenType.DO.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.DO, identifier, line);
+
         } else {
           token = new Token(TokenType.IDENTIFIER, identifier, line);
         }

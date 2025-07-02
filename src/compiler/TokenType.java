@@ -49,5 +49,8 @@ public enum TokenType {
   IF,
   THEN,
   ELSE,
-  END
+  END,
+
+  WHILE,
+  DO
 }

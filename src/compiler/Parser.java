@@ -17,6 +17,7 @@ import compiler.model.StatementListModel;
 import compiler.model.StatementModel;
 import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
+import compiler.model.WhileStatementModel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +71,11 @@ public class Parser {
       return parseIf();
     }
 
+    if (tokenType == TokenType.WHILE) {
+
+      return parseWhile();
+    }
+
     // assignment
     ExpressionModel left = parseExpression();
     if (match(TokenType.ASSIGNMENT)) {
@@ -102,6 +108,20 @@ public class Parser {
 
     return new IfStatementModel(
         testExpressionModel, thenStatementListModel, elseStatementListModel, lineNumber);
+  }
+
+  // <while_statement> ::= "while" <expression> "do" <statement_list> "end"
+  private StatementModel parseWhile() throws ParserException {
+    expect(TokenType.WHILE);
+    ExpressionModel testExpressionModel = parseExpression();
+
+    expect(TokenType.DO);
+    StatementListModel statementListModel = parseStatementList();
+
+    Token token = expect(TokenType.END);
+    int lineNumber = token.getLine();
+
+    return new WhileStatementModel(testExpressionModel, statementListModel, lineNumber);
   }
 
   // <debug_print_statement> ::= "debug_print" | "debug_print_line"  <expression>

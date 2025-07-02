@@ -1,28 +1,7 @@
-x = 2
-x = x + 4
-y = x + 8
-z = x + y
+; while loop
 
-debug_print_line "x == " + x
-debug_print_line "y == " + y
-debug_print_line "z == " + z
-
-; undeclared identifier: a line:11
-; b = a + 1
-
-if x < y then
-  a = y + 10
-  b = a + 1
-  x = x + a + b
-
-; undeclared identifier: v line:19
-; y = v
-
-  debug_print_line "a == " + a
-  debug_print_line "b == " + b
-  debug_print_line "[inside if] x == " + x
+i = 0
+while i < 10 do
+  debug_print_line "i = " + i
+  i = i + 1
 end
-
-debug_print_line "[outside if] x == " + x
-
-debug_print_line "end"
