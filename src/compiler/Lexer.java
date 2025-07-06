@@ -109,6 +109,13 @@ public class Lexer {
         continue;
       }
 
+      if (character == ',') { // comma
+        Token token = new Token(TokenType.COMMA, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
       // 2 characters
 
       if (character == '<') { // less than
@@ -229,6 +236,9 @@ public class Lexer {
           token = new Token(TokenType.WHILE, identifier, line);
         } else if (TokenType.DO.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.DO, identifier, line);
+
+        } else if (TokenType.FOR.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.FOR, identifier, line);
 
         } else {
           token = new Token(TokenType.IDENTIFIER, identifier, line);

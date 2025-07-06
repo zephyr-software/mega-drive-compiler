@@ -8,6 +8,7 @@ import compiler.model.BooleanModel;
 import compiler.model.DebugPrintLineStatementModel;
 import compiler.model.DebugPrintStatementModel;
 import compiler.model.ExpressionModel;
+import compiler.model.ForStatementModel;
 import compiler.model.GroupingModel;
 import compiler.model.IdentifierModel;
 import compiler.model.IfStatementModel;
@@ -76,6 +77,11 @@ public class Parser {
       return parseWhile();
     }
 
+    if (tokenType == TokenType.FOR) {
+
+      return parseFor();
+    }
+
     // assignment
     ExpressionModel left = parseExpression();
     if (match(TokenType.ASSIGNMENT)) {
@@ -122,6 +128,38 @@ public class Parser {
     int lineNumber = token.getLine();
 
     return new WhileStatementModel(testExpressionModel, statementListModel, lineNumber);
+  }
+
+  // <for_statement> ::= "for" <identifier> "=" <start> "," <end> ("," <step>)? "do" <body_stmts>
+  // "end"
+  private StatementModel parseFor() throws ParserException {
+    expect(TokenType.FOR);
+    IdentifierModel identifierModel = (IdentifierModel) parsePrimary();
+    expect(TokenType.ASSIGNMENT);
+    ExpressionModel startExpressionModel = parseExpression();
+
+    expect(TokenType.COMMA);
+    ExpressionModel endExpressionModel = parseExpression();
+
+    ExpressionModel stepExpressionModel = null;
+    if (isNext(TokenType.COMMA)) {
+      advance();
+      stepExpressionModel = parseExpression();
+    }
+
+    expect(TokenType.DO);
+    StatementListModel statementListModel = parseStatementList();
+
+    Token token = expect(TokenType.END);
+    int lineNumber = token.getLine();
+
+    return new ForStatementModel(
+        identifierModel,
+        startExpressionModel,
+        endExpressionModel,
+        stepExpressionModel,
+        statementListModel,
+        lineNumber);
   }
 
   // <debug_print_statement> ::= "debug_print" | "debug_print_line"  <expression>

@@ -1,7 +1,5 @@
-; while loop
+; for loop
 
-i = 0
-while i < 10 do
+for i = 0, 9, 1 do
   debug_print_line "i = " + i
-  i = i + 1
 end

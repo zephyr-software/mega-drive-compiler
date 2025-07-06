@@ -8,6 +8,7 @@ import compiler.model.BooleanModel;
 import compiler.model.DebugPrintLineStatementModel;
 import compiler.model.DebugPrintStatementModel;
 import compiler.model.ExpressionModel;
+import compiler.model.ForStatementModel;
 import compiler.model.GroupingModel;
 import compiler.model.IdentifierModel;
 import compiler.model.IfStatementModel;
@@ -315,6 +316,53 @@ public class Interpreter {
           interpret(statementListModel, whileEnvironment);
         }
       } while (isConditionAccepted);
+
+      return null;
+    }
+
+    if (nodeModel instanceof ForStatementModel) {
+      ForStatementModel forStatementModel = (ForStatementModel) nodeModel;
+
+      IdentifierModel identifierModel = forStatementModel.getIdentifierModel();
+      String varName = identifierModel.getName();
+
+      ExpressionModel startExpressionModel =
+          (ExpressionModel) forStatementModel.getStartExpressionModel();
+      Integer i = (Integer) interpret(startExpressionModel, environment);
+
+      ExpressionModel endExpressionModel =
+          (ExpressionModel) forStatementModel.getEndExpressionModel();
+      Integer end = (Integer) interpret(endExpressionModel, environment);
+
+      ExpressionModel stepExpressionModel =
+          (ExpressionModel) forStatementModel.getStepExpressionModel();
+      Integer step = (Integer) interpret(stepExpressionModel, environment);
+      if (step == null) {
+        step = 1;
+      }
+
+      Environment blockEnvironment = new Environment(environment);
+      if (i < end) {
+        while (i <= end) {
+          environment.setVariable(varName, i);
+          StatementListModel statementListModel =
+              (StatementListModel) forStatementModel.getStatementListModel();
+
+          interpret(statementListModel, blockEnvironment);
+
+          i = i + step;
+        }
+      } else {
+        while (i >= end) {
+          environment.setVariable(varName, i);
+          StatementListModel statementListModel =
+              (StatementListModel) forStatementModel.getStatementListModel();
+
+          interpret(statementListModel, blockEnvironment);
+
+          i = i - step;
+        }
+      }
 
       return null;
     }

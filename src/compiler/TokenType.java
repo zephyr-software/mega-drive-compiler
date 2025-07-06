@@ -4,6 +4,7 @@ public enum TokenType {
 
   // 1 character tokens
   SEMICOLON, // ;
+  COMMA, // ,
 
   LEFT_ROUND_BRACKET, // (
   RIGHT_ROUND_BRACKET, // (
@@ -52,5 +53,6 @@ public enum TokenType {
   END,
 
   WHILE,
-  DO
+  DO,
+  FOR
 }
