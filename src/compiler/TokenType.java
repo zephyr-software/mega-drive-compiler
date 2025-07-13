@@ -54,5 +54,7 @@ public enum TokenType {
 
   WHILE,
   DO,
-  FOR
+  FOR,
+
+  RETURN
 }

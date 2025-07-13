@@ -1,6 +1,7 @@
 package compiler;
 
 import compiler.exception.InterpreterException;
+import compiler.exception.ReturnException;
 import compiler.model.AssignmentStatementModel;
 import compiler.model.BinaryOperatorModel;
 import compiler.model.Bit16Model;
@@ -18,6 +19,7 @@ import compiler.model.IfStatementModel;
 import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
 import compiler.model.ParameterStatementModel;
+import compiler.model.ReturnStatementModel;
 import compiler.model.StatementListModel;
 import compiler.model.StatementModel;
 import compiler.model.StringModel;
@@ -31,7 +33,7 @@ public class Interpreter {
   public Interpreter() {}
 
   public Object interpret(NodeModel nodeModel, Environment environment)
-      throws InterpreterException {
+      throws InterpreterException, ReturnException {
 
     if (nodeModel instanceof BooleanModel) {
       BooleanModel booleanModel = (BooleanModel) nodeModel;
@@ -429,9 +431,15 @@ public class Interpreter {
 
       StatementListModel statementListModel =
           functionDeclarationStatementModel.getstatementListModel();
-      interpret(statementListModel, blockEnvironment);
 
-      return null;
+      Object value = null;
+      try {
+        interpret(statementListModel, blockEnvironment);
+      } catch (ReturnException returnException) {
+        value = returnException.getValue();
+      }
+
+      return value;
     }
 
     if (nodeModel instanceof FunctionCallStatementModel) {
@@ -440,6 +448,14 @@ public class Interpreter {
       FunctionCallModel functionCallModel = functionCallStatementModel.getFunctionCallModel();
 
       return interpret(functionCallModel, environment);
+    }
+
+    if (nodeModel instanceof ReturnStatementModel) {
+      ReturnStatementModel returnStatementModel = (ReturnStatementModel) nodeModel;
+      ExpressionModel value = returnStatementModel.getValue();
+      Object result = interpret(value, environment);
+
+      throw new ReturnException(result);
     }
 
     if (nodeModel == null) {

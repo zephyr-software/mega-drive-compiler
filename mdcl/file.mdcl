@@ -4,25 +4,35 @@
 ; ------------------------------------------------------------------------------
 
 
+; function factorial(n)
+;   mul = 1
+; 
+;   if n > 0 then
+;     for i = 1, n do
+;       mul = mul * i
+;     end
+;   end
+; 
+;   return mul
+; end
+
+
 function factorial(n)
-  mul = 1
-
-  if (n > 0) then
-    for i = 1, n do
-      mul = mul * i
-    end
+  if n <= 1 then
+    return 1
+  else
+    return n * factorial(n - 1)
   end
-
-  debug_print_line "the factorial of " + n + " is " + mul
 end
 
+
 factorial(0)
-factorial(1)
-factorial(2)
-factorial(3)
-factorial(4)
-factorial(5)
-factorial(6)
-factorial(7)
-factorial(8)
-factorial(9)
+
+debug_print_line "the factorial of 2 is " + factorial(2)
+
+input = 4
+factorial_result = factorial(input)
+debug_print_line "the factorial of " + input + " is " + factorial_result
+
+input = 8
+debug_print_line "the factorial of " + input + " is " + factorial(input)

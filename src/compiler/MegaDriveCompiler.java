@@ -11,6 +11,7 @@ import static compiler.tool.TextTool.printShortBanner;
 import compiler.exception.FileException;
 import compiler.exception.InterpreterException;
 import compiler.exception.ParserException;
+import compiler.exception.ReturnException;
 import compiler.exception.ValidationException;
 import compiler.model.NodeModel;
 import java.util.List;
@@ -52,7 +53,8 @@ public class MegaDriveCompiler {
     } catch (FileException
         | ParserException
         | ValidationException
-        | InterpreterException exception) {
+        | InterpreterException
+        | ReturnException exception) {
       printLine(exception.getMessage());
     }
   }

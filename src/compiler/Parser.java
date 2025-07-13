@@ -18,6 +18,7 @@ import compiler.model.IfStatementModel;
 import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
 import compiler.model.ParameterStatementModel;
+import compiler.model.ReturnStatementModel;
 import compiler.model.StatementListModel;
 import compiler.model.StatementModel;
 import compiler.model.StringModel;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
+
+  private static final int PARAMETERS_MAX_NUMBER = 255;
 
   private List<Token> tokenList;
   private int cursor;
@@ -89,6 +92,11 @@ public class Parser {
     if (tokenType == TokenType.FUNCTION) {
 
       return parseFunctionDeclaration();
+    }
+
+    if (tokenType == TokenType.RETURN) {
+
+      return parseReturn();
     }
 
     // assignment
@@ -186,10 +194,23 @@ public class Parser {
     String name = nameToken.getLexeme();
 
     expect(TokenType.LEFT_ROUND_BRACKET);
+
     List<ParameterStatementModel> parameterStatementModelList = parseParameterList();
+    int parametersNumber = parameterStatementModelList.size();
+
+    if (parametersNumber > PARAMETERS_MAX_NUMBER) {
+
+      throw new ParserException(
+          "number of function parameters: "
+              + parametersNumber
+              + " is greater then maximum number: "
+              + PARAMETERS_MAX_NUMBER);
+    }
+
     expect(TokenType.RIGHT_ROUND_BRACKET);
 
     StatementListModel statementListModel = parseStatementList();
+
     Token endToken = expect(TokenType.END);
     int lineNumber = endToken.getLine();
 
@@ -231,6 +252,15 @@ public class Parser {
     }
 
     return result;
+  }
+
+  // <return_statement> ::= "return" <expression>
+  private StatementModel parseReturn() throws ParserException {
+    expect(TokenType.RETURN);
+    ExpressionModel expressionModel = parseExpression();
+    int lineNumber = expressionModel.getLineNumber();
+
+    return new ReturnStatementModel(expressionModel, lineNumber);
   }
 
   // <debug_print_statement> ::= "debug_print" | "debug_print_line"  <expression>

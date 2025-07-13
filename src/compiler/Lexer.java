@@ -243,6 +243,9 @@ public class Lexer {
         } else if (TokenType.FUNCTION.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.FUNCTION, identifier, line);
 
+        } else if (TokenType.RETURN.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.RETURN, identifier, line);
+
         } else {
           token = new Token(TokenType.IDENTIFIER, identifier, line);
         }
