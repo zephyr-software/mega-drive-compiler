@@ -9,11 +9,15 @@ import compiler.model.DebugPrintLineStatementModel;
 import compiler.model.DebugPrintStatementModel;
 import compiler.model.ExpressionModel;
 import compiler.model.ForStatementModel;
+import compiler.model.FunctionCallModel;
+import compiler.model.FunctionCallStatementModel;
+import compiler.model.FunctionDeclarationStatementModel;
 import compiler.model.GroupingModel;
 import compiler.model.IdentifierModel;
 import compiler.model.IfStatementModel;
 import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
+import compiler.model.ParameterStatementModel;
 import compiler.model.StatementListModel;
 import compiler.model.StatementModel;
 import compiler.model.StringModel;
@@ -82,6 +86,11 @@ public class Parser {
       return parseFor();
     }
 
+    if (tokenType == TokenType.FUNCTION) {
+
+      return parseFunctionDeclaration();
+    }
+
     // assignment
     ExpressionModel left = parseExpression();
     if (match(TokenType.ASSIGNMENT)) {
@@ -90,6 +99,14 @@ public class Parser {
       int lineNumber = token.getLine();
 
       return new AssignmentStatementModel(left, right, lineNumber);
+    }
+
+    if (left instanceof FunctionCallModel) {
+      FunctionCallModel functionCallModel = (FunctionCallModel) left;
+      token = previousToken();
+      int lineNumber = token.getLine();
+
+      return new FunctionCallStatementModel(functionCallModel, lineNumber);
     }
 
     throw new ParserException("bad statement; token:" + token);
@@ -160,6 +177,60 @@ public class Parser {
         stepExpressionModel,
         statementListModel,
         lineNumber);
+  }
+
+  // <func_decl> ::= "func" <name> "(" <parameter_list>? ")" <body_statement_list> "end"
+  private StatementModel parseFunctionDeclaration() throws ParserException {
+    expect(TokenType.FUNCTION);
+    Token nameToken = expect(TokenType.IDENTIFIER);
+    String name = nameToken.getLexeme();
+
+    expect(TokenType.LEFT_ROUND_BRACKET);
+    List<ParameterStatementModel> parameterStatementModelList = parseParameterList();
+    expect(TokenType.RIGHT_ROUND_BRACKET);
+
+    StatementListModel statementListModel = parseStatementList();
+    Token endToken = expect(TokenType.END);
+    int lineNumber = endToken.getLine();
+
+    return new FunctionDeclarationStatementModel(
+        name, parameterStatementModelList, statementListModel, lineNumber);
+  }
+
+  // <parameter_list> ::= <identifier> ("," <identifier> )*
+  private List<ParameterStatementModel> parseParameterList() throws ParserException {
+    List<ParameterStatementModel> result = new ArrayList<>();
+
+    while (!isNext(TokenType.RIGHT_ROUND_BRACKET)) {
+      Token nameToken = expect(TokenType.IDENTIFIER);
+      String name = nameToken.getLexeme();
+      int lineNumber = nameToken.getLine();
+
+      ParameterStatementModel parameterStatementModel =
+          new ParameterStatementModel(name, lineNumber);
+      result.add(parameterStatementModel);
+
+      if (!isNext(TokenType.RIGHT_ROUND_BRACKET)) {
+        expect(TokenType.COMMA);
+      }
+    }
+
+    return result;
+  }
+
+  private List<ExpressionModel> parseArgumentList() throws ParserException {
+    List<ExpressionModel> result = new ArrayList<>();
+
+    while (!isNext(TokenType.RIGHT_ROUND_BRACKET)) {
+      ExpressionModel expressionModel = parseExpression();
+      result.add(expressionModel);
+
+      if (!isNext(TokenType.RIGHT_ROUND_BRACKET)) {
+        expect(TokenType.COMMA);
+      }
+    }
+
+    return result;
   }
 
   // <debug_print_statement> ::= "debug_print" | "debug_print_line"  <expression>
@@ -349,6 +420,12 @@ public class Parser {
       Token token = previousToken();
       String name = token.getLexeme();
       int lineNumber = token.getLine();
+
+      if (match(TokenType.LEFT_ROUND_BRACKET)) {
+        List<ExpressionModel> argumentList = parseArgumentList();
+        expect(TokenType.RIGHT_ROUND_BRACKET);
+        return new FunctionCallModel(name, argumentList, lineNumber);
+      }
 
       return new IdentifierModel(name, lineNumber);
     }

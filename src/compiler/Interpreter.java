@@ -9,11 +9,15 @@ import compiler.model.DebugPrintLineStatementModel;
 import compiler.model.DebugPrintStatementModel;
 import compiler.model.ExpressionModel;
 import compiler.model.ForStatementModel;
+import compiler.model.FunctionCallModel;
+import compiler.model.FunctionCallStatementModel;
+import compiler.model.FunctionDeclarationStatementModel;
 import compiler.model.GroupingModel;
 import compiler.model.IdentifierModel;
 import compiler.model.IfStatementModel;
 import compiler.model.LogicalOperatorModel;
 import compiler.model.NodeModel;
+import compiler.model.ParameterStatementModel;
 import compiler.model.StatementListModel;
 import compiler.model.StatementModel;
 import compiler.model.StringModel;
@@ -365,6 +369,77 @@ public class Interpreter {
       }
 
       return null;
+    }
+
+    if (nodeModel instanceof FunctionDeclarationStatementModel) {
+      FunctionDeclarationStatementModel functionDeclarationStatementModel =
+          (FunctionDeclarationStatementModel) nodeModel;
+      String name = functionDeclarationStatementModel.getName();
+
+      environment.setFunction(name, functionDeclarationStatementModel, environment);
+
+      return null;
+    }
+
+    if (nodeModel instanceof FunctionCallModel) {
+      FunctionCallModel functionCallModel = (FunctionCallModel) nodeModel;
+      String name = functionCallModel.getName();
+      int lineNumber = functionCallModel.getLineNumber();
+
+      Object object = environment.getFunction(name);
+      if (object == null) {
+
+        throw new InterpreterException(
+            "function is not declared; name: " + name + " line number: " + lineNumber);
+      }
+
+      FunctionDeclarationStatementModel functionDeclarationStatementModel =
+          (FunctionDeclarationStatementModel) object;
+      List<ParameterStatementModel> parameterStatementModelList =
+          functionDeclarationStatementModel.getParameterStatementModelList();
+      int parameterStatementModelListSize = parameterStatementModelList.size();
+
+      List<ExpressionModel> argumentList = functionCallModel.getArgumentList();
+      int argumentListSize = argumentList.size();
+
+      if (parameterStatementModelListSize != argumentListSize) {
+
+        throw new InterpreterException(
+            "function expected number of parameters: "
+                + parameterStatementModelListSize
+                + "; provided: "
+                + argumentListSize);
+      }
+
+      List<Object> interpretedArgumentList = new ArrayList<>();
+      for (ExpressionModel expressionModel : argumentList) {
+        Object interpretResult = interpret(expressionModel, environment);
+        interpretedArgumentList.add(interpretResult);
+      }
+
+      Environment functionEnvironment = environment.getFunctionEnvironment(name);
+      Environment blockEnvironment = new Environment(functionEnvironment);
+
+      for (ParameterStatementModel parameter : parameterStatementModelList) {
+        for (Object interpretedArgument : interpretedArgumentList) {
+          String parameterName = parameter.getName();
+          blockEnvironment.setVariable(parameterName, interpretedArgument);
+        }
+      }
+
+      StatementListModel statementListModel =
+          functionDeclarationStatementModel.getstatementListModel();
+      interpret(statementListModel, blockEnvironment);
+
+      return null;
+    }
+
+    if (nodeModel instanceof FunctionCallStatementModel) {
+      FunctionCallStatementModel functionCallStatementModel =
+          (FunctionCallStatementModel) nodeModel;
+      FunctionCallModel functionCallModel = functionCallStatementModel.getFunctionCallModel();
+
+      return interpret(functionCallModel, environment);
     }
 
     if (nodeModel == null) {

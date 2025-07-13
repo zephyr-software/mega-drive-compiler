@@ -1,5 +1,28 @@
-; for loop
+; ------------------------------------------------------------------------------
+; function to print the factorial of the number
+;
+; ------------------------------------------------------------------------------
 
-for i = 0, 9, 1 do
-  debug_print_line "i = " + i
+
+function factorial(n)
+  mul = 1
+
+  if (n > 0) then
+    for i = 1, n do
+      mul = mul * i
+    end
+  end
+
+  debug_print_line "the factorial of " + n + " is " + mul
 end
+
+factorial(0)
+factorial(1)
+factorial(2)
+factorial(3)
+factorial(4)
+factorial(5)
+factorial(6)
+factorial(7)
+factorial(8)
+factorial(9)

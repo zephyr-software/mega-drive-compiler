@@ -9,6 +9,9 @@ public class Environment {
 
   private Map<String, Object> variableMap = new HashMap<String, Object>();
 
+  private Map<String, Object> functionMap = new HashMap<String, Object>();
+  private Map<String, Environment> functionEnvironmentMap = new HashMap<String, Environment>();
+
   public Environment() {}
 
   public Environment(Environment parentEnvironment) {
@@ -39,6 +42,33 @@ public class Environment {
     }
 
     return variable;
+  }
+
+  public void setFunction(String name, Object value, Environment environment) {
+    functionMap.put(name, value);
+    functionEnvironmentMap.put(name, environment);
+  }
+
+  public Object getFunction(String name) {
+
+    Object function = functionMap.get(name);
+    if (function == null && parentEnvironment != null) {
+
+      return parentEnvironment.getFunction(name);
+    }
+
+    return function;
+  }
+
+  public Environment getFunctionEnvironment(String name) {
+
+    Environment env = functionEnvironmentMap.get(name);
+    if (env == null && parentEnvironment != null) {
+
+      return parentEnvironment.getFunctionEnvironment(name);
+    }
+
+    return env;
   }
 
   @Override
