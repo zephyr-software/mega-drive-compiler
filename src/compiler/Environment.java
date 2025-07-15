@@ -33,6 +33,10 @@ public class Environment {
     variableEnvironment.variableMap.put(name, value);
   }
 
+  public void setParameterAsLocalVariable(String name, Object value) {
+    variableMap.put(name, value);
+  }
+
   public Object getVariable(String name) {
 
     Object variable = variableMap.get(name);

@@ -425,7 +425,7 @@ public class Interpreter {
       for (ParameterStatementModel parameter : parameterStatementModelList) {
         for (Object interpretedArgument : interpretedArgumentList) {
           String parameterName = parameter.getName();
-          blockEnvironment.setVariable(parameterName, interpretedArgument);
+          blockEnvironment.setParameterAsLocalVariable(parameterName, interpretedArgument);
         }
       }
 
