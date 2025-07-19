@@ -49,6 +49,13 @@ public class MegaDriveCompiler {
       Object value = interpreter.interpret(nodeModel, new Environment());
       printLine(value);
 
+      printShortBanner("compiler");
+      Compiler compiler = new Compiler();
+      List<String> codeLineList = compiler.compile(nodeModel);
+      for (String codeLine : codeLineList) {
+        printLine(codeLine);
+      }
+
       printBanner("mega drive compiler: end");
     } catch (FileException
         | ParserException

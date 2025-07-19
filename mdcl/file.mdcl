@@ -1,38 +1,6 @@
 ; ------------------------------------------------------------------------------
-; function to print the factorial of the number
+; code generation
 ;
 ; ------------------------------------------------------------------------------
 
-
-; function factorial(n)
-;   mul = 1
-; 
-;   if n > 0 then
-;     for i = 1, n do
-;       mul = mul * i
-;     end
-;   end
-; 
-;   return mul
-; end
-
-
-function factorial(n)
-  if n <= 1 then
-    return 1
-  else
-    return n * factorial(n - 1)
-  end
-end
-
-
-factorial(0)
-
-debug_print_line "the factorial of 2 is " + factorial(2)
-
-input = 4
-factorial_result = factorial(input)
-debug_print_line "the factorial of " + input + " is " + factorial_result
-
-input = 8
-debug_print_line "the factorial of " + input + " is " + factorial(input)
+debug_print_line 3 + 5
