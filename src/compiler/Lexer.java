@@ -1,56 +1,60 @@
 package compiler;
 
-import compiler.exception.FileException;
+import static java.lang.String.format;
+
+import compiler.exception.LexerException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Lexer {
+
+  public static final String ASCII = "ascii / code";
+  public static final String ERROR = "error";
+  public static final String LINE = "line";
+  public static final String UNSUPPORTED_CHAR = "unsupported character";
 
   private char[] fileChars = null;
   private int cursorStart = 0;
   private int cursorPosition = 0;
 
   private List<Token> tokenList;
-  private List<UnknownChar> unknownCharList;
 
   private int line = 1; // first line in source file
 
   public Lexer(char[] fileChars) {
     this.fileChars = fileChars;
-
     tokenList = new ArrayList<Token>();
-    unknownCharList = new ArrayList<UnknownChar>();
   }
 
-  public List<Token> tokenize() throws FileException {
+  public List<Token> tokenize() throws LexerException {
     while (cursorPosition < fileChars.length) {
       cursorStart = cursorPosition;
       char character = advance();
 
+      if (isUnsupportedCharacter(character)) {
+
+        throw new LexerException(
+            format(
+                "%s [%s: %s] - %s: %s [%s #%s]",
+                ERROR, LINE, line, UNSUPPORTED_CHAR, character, ASCII, (int) character));
+      }
+
       // ignored characters
 
-      if (character == ' ') { // whitespace
+      if (character == '\t' // tab [ascii #9]
+          || character == '\r' // carriage return [ascii #13]
+          || character == ' ') { // space [ascii #32]
 
         continue; // ignore character
       }
 
-      if (character == '\t') { // tab
-
-        continue; // ignore character
-      }
-
-      if (character == '\n') { // new line
+      if (character == '\n') { // new line [ascii #10]
         line++;
 
-        continue;
-      }
-
-      if (character == '\r') { // carriage return
-
         continue; // ignore character
       }
 
-      if (character == ';') { // semicolon
+      if (character == ';') { // semicolon [ascii #59]
         while (peek() != '\n') { // skip comment line characters
           advance();
         }
@@ -58,110 +62,68 @@ public class Lexer {
         continue;
       }
 
-      // 1 character
+      // 1 character token
 
-      if (character == '(') { // left round bracket
-        Token token = new Token(TokenType.LEFT_ROUND_BRACKET, character + "", line);
-        tokenList.add(token);
-
-        continue;
-      }
-
-      if (character == ')') { // right round bracket
-        Token token = new Token(TokenType.RIGHT_ROUND_BRACKET, character + "", line);
-        tokenList.add(token);
-
-        continue;
-      }
-
-      if (character == '-') { // minus
-        Token token = new Token(TokenType.MINUS, character + "", line);
-        tokenList.add(token);
-
-        continue;
-      }
-
-      if (character == '+') { // plus
-        Token token = new Token(TokenType.PLUS, character + "", line);
-        tokenList.add(token);
-
-        continue;
-      }
-
-      if (character == '*') { // star
-        Token token = new Token(TokenType.STAR, character + "", line);
-        tokenList.add(token);
-
-        continue;
-      }
-
-      if (character == '/') { // slash
-        Token token = new Token(TokenType.SLASH, character + "", line);
-        tokenList.add(token);
-
-        continue;
-      }
-
-      if (character == '%') { // modulo
+      if (character == '%') { // modulo [ascii #37]
         Token token = new Token(TokenType.MODULO, character + "", line);
         tokenList.add(token);
 
         continue;
       }
 
-      if (character == ',') { // comma
+      if (character == '(') { // left round bracket [ascii #40]
+        Token token = new Token(TokenType.LEFT_ROUND_BRACKET, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == ')') { // right round bracket [ascii #41]
+        Token token = new Token(TokenType.RIGHT_ROUND_BRACKET, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == '*') { // star [ascii #42]
+        Token token = new Token(TokenType.STAR, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == '+') { // plus [ascii #43]
+        Token token = new Token(TokenType.PLUS, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == ',') { // comma [ascii #44]
         Token token = new Token(TokenType.COMMA, character + "", line);
         tokenList.add(token);
 
         continue;
       }
 
-      // 2 characters
-
-      if (character == '<') { // less than
-        if (match('=')) { // less than or equals
-          Token token = new Token(TokenType.LESS_THAN_OR_EQUALS, character + "=", line);
-          tokenList.add(token);
-
-          continue;
-        }
-
-        Token token = new Token(TokenType.LESS_THAN, character + "", line);
+      if (character == '-') { // minus [ascii #45]
+        Token token = new Token(TokenType.MINUS, character + "", line);
         tokenList.add(token);
 
         continue;
       }
 
-      if (character == '>') { // greater than
-        if (match('=')) { // greater than or equals
-          Token token = new Token(TokenType.GREATER_THAN_OR_EQUALS, character + "=", line);
-          tokenList.add(token);
-
-          continue;
-        }
-
-        Token token = new Token(TokenType.GREATER_THAN, character + "", line);
+      if (character == '/') { // slash [ascii #47]
+        Token token = new Token(TokenType.SLASH, character + "", line);
         tokenList.add(token);
 
         continue;
       }
 
-      if (character == '=') { // equals / assignment
-        if (match('=')) { // equals / equals
-          Token token = new Token(TokenType.EQUALS, character + "=", line);
-          tokenList.add(token);
+      // 2 characters or 1 character token
 
-          continue;
-        }
-
-        Token token = new Token(TokenType.ASSIGNMENT, character + "", line);
-        tokenList.add(token);
-
-        continue;
-      }
-
-      if (character == '!') { // exclamation mark / not
-        if (match('=')) { // equals / not equals
+      if (character == '!') { // exclamation mark / not [ascii #31]
+        if (match('=')) { // equals / not equals [ascii #61]
           Token token = new Token(TokenType.NOT_EQUALS, character + "=", line);
           tokenList.add(token);
 
@@ -174,7 +136,49 @@ public class Lexer {
         continue;
       }
 
-      // numbers
+      if (character == '<') { // less than [ascii #60]
+        if (match('=')) { // less than or equals [ascii #61]
+          Token token = new Token(TokenType.LESS_THAN_OR_EQUALS, character + "=", line);
+          tokenList.add(token);
+
+          continue;
+        }
+
+        Token token = new Token(TokenType.LESS_THAN, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == '=') { // equals / assignment [ascii #61]
+        if (match('=')) { // equals / equals [ascii #61]
+          Token token = new Token(TokenType.EQUALS, character + "=", line);
+          tokenList.add(token);
+
+          continue;
+        }
+
+        Token token = new Token(TokenType.ASSIGNMENT, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      if (character == '>') { // greater than [ascii #62]
+        if (match('=')) { // greater than or equals [ascii #61]
+          Token token = new Token(TokenType.GREATER_THAN_OR_EQUALS, character + "=", line);
+          tokenList.add(token);
+
+          continue;
+        }
+
+        Token token = new Token(TokenType.GREATER_THAN, character + "", line);
+        tokenList.add(token);
+
+        continue;
+      }
+
+      // number token
 
       if (isDigit(character)) {
         String number = character + "";
@@ -188,7 +192,7 @@ public class Lexer {
         continue;
       }
 
-      // identifiers
+      // identifier token
 
       if (isLetter(character) || character == '_') {
         String identifier = character + "";
@@ -196,7 +200,7 @@ public class Lexer {
           identifier += advance();
         }
 
-        // keywords
+        // keyword token
 
         Token token;
         if (TokenType.AND.name().toLowerCase().equals(identifier)) {
@@ -254,7 +258,7 @@ public class Lexer {
         continue;
       }
 
-      // strings
+      // string token
 
       if (character == '"') { // double quotes
         String string = "";
@@ -269,16 +273,28 @@ public class Lexer {
         continue;
       }
 
-      UnknownChar unknownChar = new UnknownChar(character + "", line);
-      unknownCharList.add(unknownChar);
+      throw new LexerException(
+          format(
+              "%s [%s: %s] - %s: %s [%s #%s]",
+              ERROR, LINE, line, UNSUPPORTED_CHAR, character, ASCII, (int) character));
     }
 
     return tokenList;
   }
 
-  public List<UnknownChar> getUnknownCharList() {
+  // auxiliary methods
 
-    return unknownCharList;
+  private boolean isUnsupportedCharacter(char character) throws LexerException {
+    int asciiNumber = (int) character;
+    if ((asciiNumber >= 0 && asciiNumber < 9)
+        || (asciiNumber == 11 || asciiNumber == 12)
+        || (asciiNumber >= 14 && asciiNumber < 32)
+        || (asciiNumber > 127)) {
+
+      return true;
+    }
+
+    return false;
   }
 
   private boolean isLetter(char character) {
@@ -290,6 +306,8 @@ public class Lexer {
 
     return character >= '0' && character <= '9';
   }
+
+  // work with character array cursor pointer
 
   // advance the cursor pointer
   // consumes the character

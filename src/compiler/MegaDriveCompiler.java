@@ -8,10 +8,6 @@ import static compiler.tool.TextTool.printShortBanner;
 import static java.lang.String.format;
 import static java.lang.String.join;
 
-import compiler.exception.FileException;
-import compiler.exception.InterpreterException;
-import compiler.exception.ParserException;
-import compiler.exception.ReturnException;
 import compiler.exception.ValidationException;
 import compiler.model.NodeModel;
 import java.util.List;
@@ -47,19 +43,17 @@ public class MegaDriveCompiler {
 
       // lexer section
       printShortBanner(format("%s %s", LEXER, SECTION));
+
       char[] fileChars = readFile(args[0]);
       Lexer lexer = new Lexer(fileChars);
       List<Token> tokenList = lexer.tokenize();
-      List<UnknownChar> unknownCharList = lexer.getUnknownCharList();
-      for (UnknownChar unknownChar : unknownCharList) {
-        printLine(unknownChar);
-      }
       for (Token token : tokenList) {
         printLine(token);
       }
 
       // parser section
       printShortBanner(format("%s %s", PARSER, SECTION));
+
       Parser parser = new Parser(tokenList);
       NodeModel nodeModel = parser.parse();
       printLine(nodeModel);
@@ -67,22 +61,20 @@ public class MegaDriveCompiler {
 
       // interpreter section
       printShortBanner(format("%s %s", INTERPRETER, SECTION));
+
       Interpreter interpreter = new Interpreter();
       Object value = interpreter.interpret(nodeModel, new Environment());
       printLine(value);
 
       // compiler section
       printShortBanner(format("%s %s", COMPILER, SECTION));
+
       Compiler compiler = new Compiler();
       List<String> codeLineList = compiler.compile(nodeModel);
       for (String codeLine : codeLineList) {
         printLine(codeLine);
       }
-    } catch (FileException
-        | ParserException
-        | ValidationException
-        | InterpreterException
-        | ReturnException exception) {
+    } catch (Exception exception) {
       printBanner(exception.getMessage());
     } finally {
       printBanner(format("%s: %s", PROGRAM_NAME, END));
