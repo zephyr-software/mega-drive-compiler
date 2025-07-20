@@ -5,6 +5,7 @@ public class TextTool {
   private static final String BANNER_LINE =
       "================================================================================";
   private static final String SHORT_BANNER_LINE = "----------------------------------------";
+
   private static final int AST_FORMAT_OFFSET = 4;
 
   private TextTool() {}
