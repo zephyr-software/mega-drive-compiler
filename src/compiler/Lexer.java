@@ -8,10 +8,13 @@ import java.util.List;
 
 public class Lexer {
 
-  public static final String ASCII = "ascii / code";
   public static final String ERROR = "error";
   public static final String LINE = "line";
+  public static final String ASCII = "ascii / code";
   public static final String UNSUPPORTED_CHAR = "unsupported character";
+  public static final String INPUT_DATA = "input data / file character array";
+  public static final String IS = "is";
+  public static final String NULL = "null";
 
   private char[] fileChars = null;
   private int cursorStart = 0;
@@ -27,17 +30,15 @@ public class Lexer {
   }
 
   public List<Token> tokenize() throws LexerException {
+    if (fileChars == null) {
+
+      throw new LexerException(
+          format("%s [%s: %s] - %s %s %s", ERROR, LINE, line, INPUT_DATA, IS, NULL));
+    }
+
     while (cursorPosition < fileChars.length) {
       cursorStart = cursorPosition;
-      char character = advance();
-
-      if (isUnsupportedCharacter(character)) {
-
-        throw new LexerException(
-            format(
-                "%s [%s: %s] - %s: %s [%s #%s]",
-                ERROR, LINE, line, UNSUPPORTED_CHAR, character, ASCII, (int) character));
-      }
+      char character = consumeChar();
 
       // ignored characters
 
@@ -55,8 +56,8 @@ public class Lexer {
       }
 
       if (character == ';') { // semicolon [ascii #59]
-        while (peek() != '\n') { // skip comment line characters
-          advance();
+        while (viewChar() != '\n') { // skip comment line characters
+          consumeChar();
         }
 
         continue;
@@ -123,7 +124,7 @@ public class Lexer {
       // 2 characters or 1 character token
 
       if (character == '!') { // exclamation mark / not [ascii #31]
-        if (match('=')) { // equals / not equals [ascii #61]
+        if (isMatch('=')) { // equals / not equals [ascii #61]
           Token token = new Token(TokenType.NOT_EQUALS, character + "=", line);
           tokenList.add(token);
 
@@ -137,7 +138,7 @@ public class Lexer {
       }
 
       if (character == '<') { // less than [ascii #60]
-        if (match('=')) { // less than or equals [ascii #61]
+        if (isMatch('=')) { // less than or equals [ascii #61]
           Token token = new Token(TokenType.LESS_THAN_OR_EQUALS, character + "=", line);
           tokenList.add(token);
 
@@ -151,7 +152,7 @@ public class Lexer {
       }
 
       if (character == '=') { // equals / assignment [ascii #61]
-        if (match('=')) { // equals / equals [ascii #61]
+        if (isMatch('=')) { // equals / equals [ascii #61]
           Token token = new Token(TokenType.EQUALS, character + "=", line);
           tokenList.add(token);
 
@@ -165,7 +166,7 @@ public class Lexer {
       }
 
       if (character == '>') { // greater than [ascii #62]
-        if (match('=')) { // greater than or equals [ascii #61]
+        if (isMatch('=')) { // greater than or equals [ascii #61]
           Token token = new Token(TokenType.GREATER_THAN_OR_EQUALS, character + "=", line);
           tokenList.add(token);
 
@@ -182,8 +183,8 @@ public class Lexer {
 
       if (isDigit(character)) {
         String number = character + "";
-        while (isDigit(peek())) {
-          number += advance();
+        while (isDigit(viewChar())) {
+          number += consumeChar();
         }
 
         Token token = new Token(TokenType.NUMBER, number, line);
@@ -196,63 +197,94 @@ public class Lexer {
 
       if (isLetter(character) || character == '_') {
         String identifier = character + "";
-        while (isLetter(peek()) || isDigit(peek()) || peek() == '_') {
-          identifier += advance();
+        while (isLetter(viewChar()) || isDigit(viewChar()) || viewChar() == '_') {
+          identifier += consumeChar();
         }
 
         // keyword token
 
-        Token token;
+        Token token = null;
+
         if (TokenType.AND.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.AND, identifier, line);
-        } else if (TokenType.OR.name().toLowerCase().equals(identifier)) {
+        }
+
+        if (TokenType.OR.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.OR, identifier, line);
+        }
 
-        } else if (TokenType.FALSE.name().toLowerCase().equals(identifier)) {
-          token = new Token(TokenType.BOOLEAN, identifier, line);
-        } else if (TokenType.TRUE.name().toLowerCase().equals(identifier)) {
-          token = new Token(TokenType.BOOLEAN, identifier, line);
-
-        } else if (TokenType.BIT8.name().toLowerCase().equals(identifier)) {
-          token = new Token(TokenType.BIT8, identifier, line);
-        } else if (TokenType.BIT16.name().toLowerCase().equals(identifier)) {
-          token = new Token(TokenType.BIT16, identifier, line);
-        } else if (TokenType.BIT32.name().toLowerCase().equals(identifier)) {
-          token = new Token(TokenType.BIT32, identifier, line);
-        } else if (TokenType.SIGN.name().toLowerCase().equals(identifier)) {
-          token = new Token(TokenType.SIGN, identifier, line);
-
-        } else if (TokenType.DEBUG_PRINT.name().toLowerCase().equals(identifier)) {
-          token = new Token(TokenType.DEBUG_PRINT, identifier, line);
-        } else if (TokenType.DEBUG_PRINT_LINE.name().toLowerCase().equals(identifier)) {
-          token = new Token(TokenType.DEBUG_PRINT_LINE, identifier, line);
-
-        } else if (TokenType.IF.name().toLowerCase().equals(identifier)) {
+        if (TokenType.IF.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.IF, identifier, line);
-        } else if (TokenType.THEN.name().toLowerCase().equals(identifier)) {
+        }
+
+        if (TokenType.THEN.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.THEN, identifier, line);
-        } else if (TokenType.ELSE.name().toLowerCase().equals(identifier)) {
+        }
+
+        if (TokenType.ELSE.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.ELSE, identifier, line);
-        } else if (TokenType.END.name().toLowerCase().equals(identifier)) {
+        }
+
+        if (TokenType.END.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.END, identifier, line);
+        }
 
-        } else if (TokenType.WHILE.name().toLowerCase().equals(identifier)) {
+        if (TokenType.WHILE.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.WHILE, identifier, line);
-        } else if (TokenType.DO.name().toLowerCase().equals(identifier)) {
+        }
+
+        if (TokenType.DO.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.DO, identifier, line);
+        }
 
-        } else if (TokenType.FOR.name().toLowerCase().equals(identifier)) {
+        if (TokenType.FOR.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.FOR, identifier, line);
+        }
 
-        } else if (TokenType.FUNCTION.name().toLowerCase().equals(identifier)) {
+        if (TokenType.FUNCTION.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.FUNCTION, identifier, line);
+        }
 
-        } else if (TokenType.RETURN.name().toLowerCase().equals(identifier)) {
+        if (TokenType.RETURN.name().toLowerCase().equals(identifier)) {
           token = new Token(TokenType.RETURN, identifier, line);
+        }
 
-        } else {
+        if (TokenType.FALSE.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.BOOLEAN, identifier, line);
+        }
+
+        if (TokenType.TRUE.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.BOOLEAN, identifier, line);
+        }
+
+        if (TokenType.BIT8.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.BIT8, identifier, line);
+        }
+
+        if (TokenType.BIT16.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.BIT16, identifier, line);
+        }
+
+        if (TokenType.BIT32.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.BIT32, identifier, line);
+        }
+
+        if (TokenType.SIGN.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.SIGN, identifier, line);
+        }
+
+        if (TokenType.DEBUG_PRINT.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.DEBUG_PRINT, identifier, line);
+        }
+
+        if (TokenType.DEBUG_PRINT_LINE.name().toLowerCase().equals(identifier)) {
+          token = new Token(TokenType.DEBUG_PRINT_LINE, identifier, line);
+        }
+
+        if (token == null) {
           token = new Token(TokenType.IDENTIFIER, identifier, line);
         }
+
         tokenList.add(token);
 
         continue;
@@ -262,10 +294,10 @@ public class Lexer {
 
       if (character == '"') { // double quotes
         String string = "";
-        while (peek() != '"') {
-          string += advance();
+        while (viewChar() != '"') {
+          string += consumeChar();
         }
-        advance(); // consume the ending quote
+        consumeChar(); // consume the ending quote
 
         Token token = new Token(TokenType.STRING, string, line);
         tokenList.add(token);
@@ -282,20 +314,37 @@ public class Lexer {
     return tokenList;
   }
 
-  // auxiliary methods
+  // work with character array cursor pointer
 
-  private boolean isUnsupportedCharacter(char character) throws LexerException {
-    int asciiNumber = (int) character;
-    if ((asciiNumber >= 0 && asciiNumber < 9)
-        || (asciiNumber == 11 || asciiNumber == 12)
-        || (asciiNumber >= 14 && asciiNumber < 32)
-        || (asciiNumber > 127)) {
+  private char consumeChar() {
+    char character = fileChars[cursorPosition];
+    cursorPosition++;
 
-      return true;
+    return character;
+  }
+
+  private char viewChar() {
+
+    return fileChars[cursorPosition];
+  }
+
+  private boolean isMatch(char expectedCharacter) {
+    if (cursorPosition >= fileChars.length) {
+
+      return false;
     }
 
-    return false;
+    if (fileChars[cursorPosition] != expectedCharacter) {
+
+      return false;
+    }
+
+    cursorPosition++; // if it is a match, we also consume that char
+
+    return true;
   }
+
+  // auxiliary methods
 
   private boolean isLetter(char character) {
 
@@ -305,51 +354,5 @@ public class Lexer {
   private boolean isDigit(char character) {
 
     return character >= '0' && character <= '9';
-  }
-
-  // work with character array cursor pointer
-
-  // advance the cursor pointer
-  // consumes the character
-  private char advance() {
-    char character = fileChars[cursorPosition];
-    cursorPosition++;
-
-    return character;
-  }
-
-  // just takes a peek at the current character
-  // does not consume the character
-  private char peek() {
-    char character = fileChars[cursorPosition];
-
-    return character;
-  }
-
-  // looks at the next character in the source
-  // does not consume the character
-  private char lookAhead() {
-    char character = fileChars[cursorPosition + 1];
-
-    return character;
-  }
-
-  // check if current character matches an expectation
-  // consumes the character only if match is true
-  private boolean match(char expectedCharacter) {
-    if (cursorPosition >= fileChars.length) {
-
-      return false;
-    }
-
-    char character = fileChars[cursorPosition];
-    if (character != expectedCharacter) {
-
-      return false;
-    }
-
-    cursorPosition++; // if it is a match, we also consume that char
-
-    return true;
   }
 }
