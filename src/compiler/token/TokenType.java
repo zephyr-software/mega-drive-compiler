@@ -1,4 +1,4 @@
-package compiler;
+package compiler.token;
 
 public enum TokenType {
 

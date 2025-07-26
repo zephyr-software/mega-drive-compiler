@@ -10,6 +10,7 @@ import static java.lang.String.join;
 
 import compiler.exception.ValidationException;
 import compiler.model.NodeModel;
+import compiler.token.Token;
 import java.util.List;
 
 public class MegaDriveCompiler {

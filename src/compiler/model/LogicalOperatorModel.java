@@ -1,6 +1,6 @@
 package compiler.model;
 
-import compiler.Token;
+import compiler.token.Token;
 
 // x and y
 // x or y

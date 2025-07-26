@@ -3,6 +3,8 @@ package compiler;
 import static java.lang.String.format;
 
 import compiler.exception.LexerException;
+import compiler.token.Token;
+import compiler.token.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package compiler.model;
 
-import compiler.Token;
+import compiler.token.Token;
 
 // example: -operand
 public class UnaryOperatorModel extends ExpressionModel {

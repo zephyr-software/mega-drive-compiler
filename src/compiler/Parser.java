@@ -24,6 +24,8 @@ import compiler.model.StatementModel;
 import compiler.model.StringModel;
 import compiler.model.UnaryOperatorModel;
 import compiler.model.WhileStatementModel;
+import compiler.token.Token;
+import compiler.token.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 

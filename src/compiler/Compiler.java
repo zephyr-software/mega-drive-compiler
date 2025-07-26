@@ -6,6 +6,8 @@ import compiler.model.DebugPrintLineStatementModel;
 import compiler.model.NodeModel;
 import compiler.model.StatementListModel;
 import compiler.model.StatementModel;
+import compiler.token.Token;
+import compiler.token.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 
