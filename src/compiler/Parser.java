@@ -106,7 +106,7 @@ public class Parser {
     if (match(TokenType.ASSIGNMENT)) {
       ExpressionModel right = parseExpression();
       token = previousToken();
-      int lineNumber = token.getLine();
+      int lineNumber = token.getLineNumber();
 
       return new AssignmentStatementModel(left, right, lineNumber);
     }
@@ -114,7 +114,7 @@ public class Parser {
     if (left instanceof FunctionCallModel) {
       FunctionCallModel functionCallModel = (FunctionCallModel) left;
       token = previousToken();
-      int lineNumber = token.getLine();
+      int lineNumber = token.getLineNumber();
 
       return new FunctionCallStatementModel(functionCallModel, lineNumber);
     }
@@ -137,7 +137,7 @@ public class Parser {
     }
 
     Token token = expect(TokenType.END);
-    int lineNumber = token.getLine();
+    int lineNumber = token.getLineNumber();
 
     return new IfStatementModel(
         testExpressionModel, thenStatementListModel, elseStatementListModel, lineNumber);
@@ -152,7 +152,7 @@ public class Parser {
     StatementListModel statementListModel = parseStatementList();
 
     Token token = expect(TokenType.END);
-    int lineNumber = token.getLine();
+    int lineNumber = token.getLineNumber();
 
     return new WhileStatementModel(testExpressionModel, statementListModel, lineNumber);
   }
@@ -178,7 +178,7 @@ public class Parser {
     StatementListModel statementListModel = parseStatementList();
 
     Token token = expect(TokenType.END);
-    int lineNumber = token.getLine();
+    int lineNumber = token.getLineNumber();
 
     return new ForStatementModel(
         identifierModel,
@@ -214,7 +214,7 @@ public class Parser {
     StatementListModel statementListModel = parseStatementList();
 
     Token endToken = expect(TokenType.END);
-    int lineNumber = endToken.getLine();
+    int lineNumber = endToken.getLineNumber();
 
     return new FunctionDeclarationStatementModel(
         name, parameterStatementModelList, statementListModel, lineNumber);
@@ -227,7 +227,7 @@ public class Parser {
     while (!isNext(TokenType.RIGHT_ROUND_BRACKET)) {
       Token nameToken = expect(TokenType.IDENTIFIER);
       String name = nameToken.getLexeme();
-      int lineNumber = nameToken.getLine();
+      int lineNumber = nameToken.getLineNumber();
 
       ParameterStatementModel parameterStatementModel =
           new ParameterStatementModel(name, lineNumber);
@@ -297,7 +297,7 @@ public class Parser {
 
     while (match(TokenType.OR)) {
       Token operator = previousToken();
-      int lineNumber = operator.getLine();
+      int lineNumber = operator.getLineNumber();
       ExpressionModel right = parseAnd();
       expressionModel = new LogicalOperatorModel(operator, expressionModel, right, lineNumber);
     }
@@ -311,7 +311,7 @@ public class Parser {
 
     while (match(TokenType.AND)) {
       Token operator = previousToken();
-      int lineNumber = operator.getLine();
+      int lineNumber = operator.getLineNumber();
       ExpressionModel right = parseEquality();
       expressionModel = new LogicalOperatorModel(operator, expressionModel, right, lineNumber);
     }
@@ -325,7 +325,7 @@ public class Parser {
 
     while (match(TokenType.NOT_EQUALS) || match(TokenType.EQUALS)) {
       Token operator = previousToken();
-      int lineNumber = operator.getLine();
+      int lineNumber = operator.getLineNumber();
       ExpressionModel right = parseComparison();
       expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
     }
@@ -342,7 +342,7 @@ public class Parser {
         || match(TokenType.GREATER_THAN)
         || match(TokenType.GREATER_THAN_OR_EQUALS)) {
       Token operator = previousToken();
-      int lineNumber = operator.getLine();
+      int lineNumber = operator.getLineNumber();
       ExpressionModel right = parseAddition();
       expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
     }
@@ -356,7 +356,7 @@ public class Parser {
 
     while (match(TokenType.MINUS) || match(TokenType.PLUS)) {
       Token operator = previousToken();
-      int lineNumber = operator.getLine();
+      int lineNumber = operator.getLineNumber();
       ExpressionModel right = parseMultiplication();
       expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
     }
@@ -370,7 +370,7 @@ public class Parser {
 
     while (match(TokenType.SLASH) || match(TokenType.STAR)) {
       Token operator = previousToken();
-      int lineNumber = operator.getLine();
+      int lineNumber = operator.getLineNumber();
       ExpressionModel right = parseModulo();
       expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
     }
@@ -384,7 +384,7 @@ public class Parser {
 
     while (match(TokenType.MODULO)) {
       Token operator = previousToken();
-      int lineNumber = operator.getLine();
+      int lineNumber = operator.getLineNumber();
       ExpressionModel right = parseUnary();
       expressionModel = new BinaryOperatorModel(operator, expressionModel, right, lineNumber);
     }
@@ -396,7 +396,7 @@ public class Parser {
   private ExpressionModel parseUnary() throws ParserException {
     if (match(TokenType.NOT) | match(TokenType.MINUS) | match(TokenType.PLUS)) {
       Token operator = previousToken();
-      int lineNumber = operator.getLine();
+      int lineNumber = operator.getLineNumber();
       ExpressionModel operand = parseUnary();
 
       return new UnaryOperatorModel(operator, operand, lineNumber);
@@ -411,7 +411,7 @@ public class Parser {
       Token token = previousToken();
       String lexeme = token.getLexeme();
       Integer value = Integer.parseInt(lexeme);
-      int lineNumber = token.getLine();
+      int lineNumber = token.getLineNumber();
 
       return new Bit16Model(value, lineNumber);
     }
@@ -420,7 +420,7 @@ public class Parser {
       Token token = previousToken();
       String lexeme = token.getLexeme();
       Boolean value = Boolean.parseBoolean(lexeme);
-      int lineNumber = token.getLine();
+      int lineNumber = token.getLineNumber();
 
       return new BooleanModel(value, lineNumber);
     }
@@ -428,7 +428,7 @@ public class Parser {
     if (match(TokenType.STRING)) {
       Token token = previousToken();
       String value = token.getLexeme();
-      int lineNumber = token.getLine();
+      int lineNumber = token.getLineNumber();
 
       return new StringModel(value, lineNumber);
     }
@@ -439,11 +439,11 @@ public class Parser {
       if (!match(TokenType.RIGHT_ROUND_BRACKET)) {
 
         Token token = previousToken();
-        throw new ParserException("error: char ')' expected; line: " + token.getLine());
+        throw new ParserException("error: char ')' expected; line: " + token.getLineNumber());
       }
 
       Token token = previousToken();
-      int lineNumber = token.getLine();
+      int lineNumber = token.getLineNumber();
 
       return new GroupingModel(nodeModel, lineNumber);
     }
@@ -451,7 +451,7 @@ public class Parser {
     if (match(TokenType.IDENTIFIER)) {
       Token token = previousToken();
       String name = token.getLexeme();
-      int lineNumber = token.getLine();
+      int lineNumber = token.getLineNumber();
 
       if (match(TokenType.LEFT_ROUND_BRACKET)) {
         List<ExpressionModel> argumentList = parseArgumentList();

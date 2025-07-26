@@ -4,12 +4,12 @@ public class Token {
 
   private TokenType tokenType;
   private String lexeme;
-  private int line;
+  private int lineNumber;
 
-  public Token(TokenType tokenType, String lexeme, int line) {
+  public Token(TokenType tokenType, String lexeme, int lineNumber) {
     this.tokenType = tokenType;
     this.lexeme = lexeme;
-    this.line = line;
+    this.lineNumber = lineNumber;
   }
 
   public TokenType getTokenType() {
@@ -22,14 +22,20 @@ public class Token {
     return lexeme;
   }
 
-  public int getLine() {
+  public int getLineNumber() {
 
-    return line;
+    return lineNumber;
   }
 
   @Override
   public String toString() {
 
-    return "token [token type: " + tokenType + "; lexeme: " + lexeme + "; line: " + line + "]";
+    return "token [token type: "
+        + tokenType
+        + "; lexeme: '"
+        + lexeme
+        + "'; line number: "
+        + lineNumber
+        + "]";
   }
 }

@@ -3,27 +3,23 @@ package compiler.token;
 public enum TokenType {
 
   // 1 character tokens
-  SEMICOLON, // ;
-  COMMA, // ,
-
-  LEFT_ROUND_BRACKET, // (
-  RIGHT_ROUND_BRACKET, // (
-
-  ASSIGNMENT, // =
-  PLUS, // +
-  MINUS, // -
-  STAR, // *
-  SLASH, // /
-  MODULO, // %
-  NOT, // !
-
-  LESS_THAN, // <
-  GREATER_THAN, // >
+  NOT, // ! [ascii 33]
+  MODULO, // % [ascii #37]
+  LEFT_ROUND_BRACKET, // ( [ascii #40]
+  RIGHT_ROUND_BRACKET, // ) [ascii #41]
+  STAR, // * [ascii #42]
+  PLUS, // + [ascii #43]
+  COMMA, // , [ascii #44]
+  MINUS, // - [ascii #45]
+  SLASH, // / [ascii #47]
+  SEMICOLON, // ; [ascii #59]
+  LESS_THAN, // < [ascii #60]
+  ASSIGNMENT, // = [ascii #61]
+  GREATER_THAN, // > [ascii #62]
 
   // 2 characters token
   EQUALS, // ==
   NOT_EQUALS, // !=
-
   LESS_THAN_OR_EQUALS, // <=
   GREATER_THAN_OR_EQUALS, // >=
 
@@ -44,9 +40,6 @@ public enum TokenType {
   SIGN,
   FUNCTION,
 
-  DEBUG_PRINT,
-  DEBUG_PRINT_LINE,
-
   IF,
   THEN,
   ELSE,
@@ -56,5 +49,8 @@ public enum TokenType {
   DO,
   FOR,
 
-  RETURN
+  RETURN,
+
+  DEBUG_PRINT,
+  DEBUG_PRINT_LINE
 }
