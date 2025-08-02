@@ -29,6 +29,58 @@ import compiler.token.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+syntax
+backus–naur form - production rules
+
+<digit> ::= "0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"
+<lowercase_letter> ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" |
+                       "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" 
+<uppercase_letter> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" |
+                       "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" 
+<alphabet> ::= <lowercase_letter> | <uppercase_letter> | "_"
+<alphanumeric> ::= <alphabet> | <digit>
+
+<boolean> ::= "true" | "false"
+<number> ::= <digit>+
+<string> ::= '"' <alphanumeric>+ '"'
+
+<literal> ::= <boolean> | <number> | <string>
+<identifier> ::= <alphabet> <alphanumeric>*
+
+<expression> ::= <logical_or>
+<logical_or> ::= <logical_and> ( "or" <logical_and> )*
+<logical_and> ::= <equality> ( "and" <equality> )*
+<equality> ::= <comparison> ( ( "!=" | "==" ) <comparison> )*
+<comparison> ::= <addition> ( ( "<" | "<=" | ">" | ">=" ) <addition> )*
+<addition> ::= <multiplication> ( ("-" | "+" ) <multiplication> )*
+<multiplication> ::= <modulo> ( ( "/" | "*" ) <modulo> )*
+<modulo> ::= <unary> ( "%" <unary> )*
+<unary> ::= ( "!" | "-" | "+" ) <unary> | <primary>
+<grouping> ::= "(" <expression> ")"
+<primary> ::= <literal> | <identifier> | <grouping>
+
+<statement> ::= <expression_statement> | <assignment_statement> | <if_statement> | <while_Statement> |
+                <for_statement> | <function_declaration_statement> | <function_call_statement> |
+                <return_statement> | <debug_print_statement>
+<statement_list> ::= <statement>+
+<program> ::= <statement_list>
+<expression_statement> ::= <expression>
+<assignment_statement> ::= identifier "=" <experession>
+<if_statement> ::= "if" <expression> "then" <statement_list> ( "else" <statement_list> )? "end"
+<while_statement> ::= "while" <expression> "do" <statement_list> "end"
+<for_statement> ::= "for" <identifier> "=" <start> "," <end> ("," <step>)? "do" <body_stmts> "end"
+
+<parameter_list> ::= <identifier> ("," <identifier> )*
+<function_name> ::= identifier
+<function_declaration_statement> ::= "function" <function_name> "(" <parameter_list>* ")" <statement_list> "end"
+<argument_list> = expression ( "," expression)*
+<function_call_statement> ::= identifier "("argument_list* ")"
+<return_statement> ::= "return" <expression>
+
+<debug_print_statement> ::= "debug_print" | "debug_print_line"  <expression>
+*/
+
 public class Parser {
 
   private static final int PARAMETERS_MAX_NUMBER = 255;
@@ -286,6 +338,7 @@ public class Parser {
     throw new ParserException("no debug print statement found");
   }
 
+  // <expression> ::= <logical_or>
   private ExpressionModel parseExpression() throws ParserException {
 
     return parseOr();
@@ -405,7 +458,7 @@ public class Parser {
     return parsePrimary();
   }
 
-  // <primary> ::= <integer> | <boolean> | <string> | <identifier> '(' <expr> ')'
+  // <primary> ::= <number> | <boolean> | <string> | <identifier> '(' <expr> ')'
   private ExpressionModel parsePrimary() throws ParserException {
     if (match(TokenType.NUMBER)) {
       Token token = previousToken();
