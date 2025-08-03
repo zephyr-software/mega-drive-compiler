@@ -1,5 +1,7 @@
 package compiler;
 
+import static java.lang.String.format;
+
 import compiler.exception.ParserException;
 import compiler.model.AssignmentStatementModel;
 import compiler.model.BinaryOperatorModel;
@@ -35,9 +37,9 @@ backus–naur form - production rules
 
 <digit> ::= "0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"
 <lowercase_letter> ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" |
-                       "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" 
+                       "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
 <uppercase_letter> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" |
-                       "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" 
+                       "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
 <alphabet> ::= <lowercase_letter> | <uppercase_letter> | "_"
 <alphanumeric> ::= <alphabet> | <digit>
 
@@ -48,42 +50,57 @@ backus–naur form - production rules
 <literal> ::= <boolean> | <number> | <string>
 <identifier> ::= <alphabet> <alphanumeric>*
 
-<expression> ::= <logical_or>
-<logical_or> ::= <logical_and> ( "or" <logical_and> )*
-<logical_and> ::= <equality> ( "and" <equality> )*
-<equality> ::= <comparison> ( ( "!=" | "==" ) <comparison> )*
-<comparison> ::= <addition> ( ( "<" | "<=" | ">" | ">=" ) <addition> )*
-<addition> ::= <multiplication> ( ("-" | "+" ) <multiplication> )*
-<multiplication> ::= <modulo> ( ( "/" | "*" ) <modulo> )*
-<modulo> ::= <unary> ( "%" <unary> )*
-<unary> ::= ( "!" | "-" | "+" ) <unary> | <primary>
-<grouping> ::= "(" <expression> ")"
 <primary> ::= <literal> | <identifier> | <grouping>
+<unary> ::= ( "!" | "-" | "+" ) <unary> | <primary>
+<modulo> ::= <unary> ( "%" <unary> )*
+<multiplication> ::= <modulo> ( ( "/" | "*" ) <modulo> )*
+<addition> ::= <multiplication> ( ("-" | "+" ) <multiplication> )*
+<comparison> ::= <addition> ( ( "<" | "<=" | ">" | ">=" ) <addition> )*
+<equality> ::= <comparison> ( ( "!=" | "==" ) <comparison> )*
+<logical_and> ::= <equality> ( "and" <equality> )*
+<logical_or> ::= <logical_and> ( "or" <logical_and> )*
+<expression> ::= <logical_or>
 
+<grouping> ::= "(" <expression> ")"
+
+<argument_list> = expression ( "," expression)*
+<parameter_list> ::= <identifier> ("," <identifier> )*
+
+<debug_print_statement> ::= "debug_print" | "debug_print_line"  <expression>
+
+<return_statement> ::= "return" <expression>
+<function_call_statement> ::= identifier "("argument_list* ")"
+<function_declaration_statement> ::= "function" identifier "(" <parameter_list>* ")" <statement_list> "end"
+<for statement> ::= "for" <assignment_statement> "," <expression> ( "," <expression> )?
+                    "do" <statement_list> "end"
+<while_statement> ::= "while" <expression> "do" <statement_list> "end"
+<if_statement> ::= "if" <expression> "then" <statement_list> ( "else" <statement_list> )? "end
+<assignment_statement> ::= identifier "=" <experession>
+<expression_statement> ::= <expression>
 <statement> ::= <expression_statement> | <assignment_statement> | <if_statement> | <while_Statement> |
                 <for_statement> | <function_declaration_statement> | <function_call_statement> |
                 <return_statement> | <debug_print_statement>
 <statement_list> ::= <statement>+
+
 <program> ::= <statement_list>
-<expression_statement> ::= <expression>
-<assignment_statement> ::= identifier "=" <experession>
-<if_statement> ::= "if" <expression> "then" <statement_list> ( "else" <statement_list> )? "end"
-<while_statement> ::= "while" <expression> "do" <statement_list> "end"
-<for_statement> ::= "for" <identifier> "=" <start> "," <end> ("," <step>)? "do" <body_stmts> "end"
-
-<parameter_list> ::= <identifier> ("," <identifier> )*
-<function_name> ::= identifier
-<function_declaration_statement> ::= "function" <function_name> "(" <parameter_list>* ")" <statement_list> "end"
-<argument_list> = expression ( "," expression)*
-<function_call_statement> ::= identifier "("argument_list* ")"
-<return_statement> ::= "return" <expression>
-
-<debug_print_statement> ::= "debug_print" | "debug_print_line"  <expression>
 */
 
 public class Parser {
 
   private static final int PARAMETERS_MAX_NUMBER = 255;
+
+  private static final String BAD_STATEMENT = "bad statement";
+  public static final String ERROR = "error";
+  public static final String TOKEN = "token";
+  public static final String FUNCTION_MAX_PARAMETER_EXCEEDED =
+      "maximum number of function parameters exceeded";
+  public static final String PARAMETERS_NUMBER = "parameters number";
+  public static final String MAXIMUM = "maximum";
+  public static final String DEBUG_PRINT = "debug print";
+  public static final String NOT_FOUND = "not found";
+  public static final String MODEL_NOT_SUPPORTED = "model is not supported";
+  public static final String CHARACTER_EXPECTED = "character expected";
+  public static final String LINE = "line";
 
   private List<Token> tokenList;
   private int cursor;
@@ -99,12 +116,13 @@ public class Parser {
     return parseProgram();
   }
 
-  // <program> ::= <statement>*
+  // <program> ::= <statement_list>
   private NodeModel parseProgram() throws ParserException {
 
     return parseStatementList();
   }
 
+  // <statement_list> ::= <statement>+
   private StatementListModel parseStatementList() throws ParserException {
     List<StatementModel> statementModelList = new ArrayList<StatementModel>();
 
@@ -120,6 +138,9 @@ public class Parser {
   }
 
   // predictive parsing
+  // <statement> ::= <expression_statement> | <assignment_statement> | <if_statement> |
+  //                 <while_Statement> | <for_statement> | <function_declaration_statement> |
+  //                 <function_call_statement> |  <return_statement> | <debug_print_statement>
   private StatementModel parseStatement() throws ParserException {
     Token token = peek();
     TokenType tokenType = token.getTokenType();
@@ -153,7 +174,6 @@ public class Parser {
       return parseReturn();
     }
 
-    // assignment
     ExpressionModel left = parseExpression();
     if (match(TokenType.ASSIGNMENT)) {
       ExpressionModel right = parseExpression();
@@ -171,7 +191,7 @@ public class Parser {
       return new FunctionCallStatementModel(functionCallModel, lineNumber);
     }
 
-    throw new ParserException("bad statement; token:" + token);
+    throw new ParserException(format("%s: %s; %s: %s", ERROR, BAD_STATEMENT, TOKEN, token));
   }
 
   // <if_statement> ::= "if" <expression> "then" <statement_list> ( "else" <statement_list> )? "end"
@@ -209,8 +229,8 @@ public class Parser {
     return new WhileStatementModel(testExpressionModel, statementListModel, lineNumber);
   }
 
-  // <for_statement> ::= "for" <identifier> "=" <start> "," <end> ("," <step>)? "do" <body_stmts>
-  // "end"
+  // <for statement> ::= "for" <assignment_statement> "," <expression> ( "," <expression> )?
+  //                     "do" <statement_list> "end"
   private StatementModel parseFor() throws ParserException {
     expect(TokenType.FOR);
     IdentifierModel identifierModel = (IdentifierModel) parsePrimary();
@@ -255,10 +275,15 @@ public class Parser {
     if (parametersNumber > PARAMETERS_MAX_NUMBER) {
 
       throw new ParserException(
-          "number of function parameters: "
-              + parametersNumber
-              + " is greater then maximum number: "
-              + PARAMETERS_MAX_NUMBER);
+          format(
+              "%s: %s; %s: %s; %s %s: %s",
+              ERROR,
+              FUNCTION_MAX_PARAMETER_EXCEEDED,
+              PARAMETERS_NUMBER,
+              parametersNumber,
+              MAXIMUM,
+              PARAMETERS_NUMBER,
+              PARAMETERS_MAX_NUMBER));
     }
 
     expect(TokenType.RIGHT_ROUND_BRACKET);
@@ -293,6 +318,7 @@ public class Parser {
     return result;
   }
 
+  // <argument_list> = expression ( "," expression)*
   private List<ExpressionModel> parseArgumentList() throws ParserException {
     List<ExpressionModel> result = new ArrayList<>();
 
@@ -322,20 +348,18 @@ public class Parser {
     if (match(TokenType.DEBUG_PRINT)) {
       ExpressionModel expressionModel = parseExpression();
       int lineNumber = expressionModel.getLineNumber();
-      StatementModel statementModel = new DebugPrintStatementModel(expressionModel, lineNumber);
 
-      return statementModel;
+      return new DebugPrintStatementModel(expressionModel, lineNumber);
     }
 
     if (match(TokenType.DEBUG_PRINT_LINE)) {
       ExpressionModel expressionModel = parseExpression();
       int lineNumber = expressionModel.getLineNumber();
-      StatementModel statementModel = new DebugPrintLineStatementModel(expressionModel, lineNumber);
 
-      return statementModel;
+      return new DebugPrintLineStatementModel(expressionModel, lineNumber);
     }
 
-    throw new ParserException("no debug print statement found");
+    throw new ParserException(format("%s: %s %s - %s", ERROR, TOKEN, NOT_FOUND, DEBUG_PRINT));
   }
 
   // <expression> ::= <logical_or>
@@ -492,7 +516,11 @@ public class Parser {
       if (!match(TokenType.RIGHT_ROUND_BRACKET)) {
 
         Token token = previousToken();
-        throw new ParserException("error: char ')' expected; line: " + token.getLineNumber());
+        int lineNumber = token.getLineNumber();
+        throw new ParserException(
+            format(
+                "%s: %s '%s'; %s: %s; %s: %s",
+                ERROR, CHARACTER_EXPECTED, "(", TOKEN, token, LINE, lineNumber));
       }
 
       Token token = previousToken();
@@ -516,7 +544,10 @@ public class Parser {
     }
 
     Token token = peek();
-    throw new ParserException("not supported model; token: " + token);
+    int lineNumber = token.getLineNumber();
+    throw new ParserException(
+        format(
+            "%s: %s; %s: %s; %s: %s", ERROR, MODEL_NOT_SUPPORTED, TOKEN, token, LINE, lineNumber));
   }
 
   // work with token list
