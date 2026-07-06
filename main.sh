@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# bash strict mode
+# -e: exit immediately if a command fails
+# -u: exit on use of an unset variable
+# -o pipefail: fail a pipeline if any command in it fails
+set -euo pipefail
+
+
 # description:
 # mega drive compiler - project build script
 #
