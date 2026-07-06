@@ -20,8 +20,8 @@
 # variables
 #
 # ==============================================================================
-code_compiler=/home/zephyr/soft/jdk-21.0.7+6/bin/javac
-code_vm=/home/zephyr/soft/jdk-21.0.7+6/bin/java
+code_compiler=/home/zephyr/soft/jdk-25.0.3+9/bin/javac
+code_vm=/home/zephyr/soft/jdk-25.0.3+9/bin/java
 code_formatter=/home/zephyr/soft/google-java-format_linux-x86-64
 
 work_dir=$(pwd)
