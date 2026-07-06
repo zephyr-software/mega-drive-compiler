@@ -23,13 +23,21 @@ set -euo pipefail
 # ./main.sh --run      run compiler
 # ./main.sh --format   format source files
 
+
 # ==============================================================================
 # variables
 #
 # ==============================================================================
-code_compiler=/home/zephyr/soft/jdk-25.0.3+9/bin/javac
-code_vm=/home/zephyr/soft/jdk-25.0.3+9/bin/java
-code_formatter=/home/zephyr/soft/google-java-format_linux-x86-64
+# project directory
+script_dir="$(dirname -- "${BASH_SOURCE[0]}")"
+project_dir="$(cd -- "$script_dir" && pwd)"
+
+# external tools
+java_home="${JAVA_HOME:-$project_dir/tools/jdk}"
+code_compiler="$java_home/bin/javac"
+code_vm="$java_home/bin/java"
+
+code_formatter="${CODE_FORMATTER:-$project_dir/tool/google-java-format_linux-x86-64}"
 
 work_dir=$(pwd)
 src_dir=src
@@ -40,6 +48,7 @@ main_file=MegaDriveCompiler.java
 main_class=MegaDriveCompiler
 mdcl_file=file.mdcl # default source file for md compiler
 
+
 # ==============================================================================
 # code
 #
@@ -47,6 +56,26 @@ mdcl_file=file.mdcl # default source file for md compiler
 echo "mega drive compiler - project build script"
 echo
 
+# --------------------------------------
+# check tools
+# --------------------------------------
+if [[ ! -x "$code_compiler" ]]; then
+    echo "compiler not found or not executable: $code_compiler" >&2
+
+    exit 1
+fi
+
+if [[ ! -x "$code_vm" ]]; then
+    echo "java vm not found or not executable: $code_vm" >&2
+
+    exit 1
+fi
+
+if [[ ! -x "$code_formatter" ]]; then
+    echo "formatter not found or not executable: $code_formatter" >&2
+
+    exit 1
+fi
 
 # --------------------------------------
 # print help screen
